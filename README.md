@@ -6,25 +6,19 @@ Code submitter for Student Robotics Virtual Competition.
 
 ## Development setup
 
-Install the project itself:
+Install all the things:
 
 ``` shell
-$ pip install -e .
+$ pip install -e . -r script/dev-requirements.txt uvicorn
 ```
 
-Install the linters and other tools:
+Run the checks:
 
 ``` shell
-$ pip install -r script/dev-requirements.txt
+$ ./script/check
 ```
 
-You'll also need an ASGI server, such as [uvicorn](http://www.uvicorn.org/):
-
-``` shell
-$ pip install uvicorn
-```
-
-Run the project:
+Run the server:
 
 ``` shell
 $ ./script/uvicorn
