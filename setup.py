@@ -39,5 +39,8 @@ setup(
         'starlette',
         'jinja2',
         'python-multipart',
+        'databases[sqlite]',
+        'sqlalchemy',
+        'alembic',
     ],
 )

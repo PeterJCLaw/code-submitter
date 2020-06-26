@@ -1,6 +1,7 @@
 import io
 import zipfile
 
+import databases
 from starlette.routing import Route
 from starlette.requests import Request
 from starlette.responses import Response
@@ -8,6 +9,10 @@ from starlette.templating import Jinja2Templates
 from starlette.applications import Starlette
 from starlette.datastructures import UploadFile
 
+from . import config
+from .tables import Archive
+
+database = databases.Database(config.DATABASE_URL)
 templates = Jinja2Templates(directory='templates')
 
 
@@ -37,6 +42,10 @@ async def upload(request: Request) -> Response:
     except zipfile.BadZipFile:
         return Response("Must upload a ZIP file", status_code=400)
 
+    await database.execute(
+        Archive.insert().values(content=contents),
+    )
+
     return Response('')
 
 
@@ -45,4 +54,8 @@ routes = [
     Route('/upload', endpoint=upload, methods=['POST']),
 ]
 
-app = Starlette(routes=routes)
+app = Starlette(
+    routes=routes,
+    on_startup=[database.connect],
+    on_shutdown=[database.disconnect],
+)
