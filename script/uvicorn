@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec uvicorn code_submitter:app --reload "$@"
