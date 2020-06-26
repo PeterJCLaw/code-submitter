@@ -32,7 +32,7 @@ class AppTests(unittest.TestCase):
         super().setUp()
 
         # App import must happen after TESTING environment setup
-        from code_submitter import app
+        from code_submitter.server import app
 
         test_client = TestClient(app)
         self.session = test_client.__enter__()
