@@ -1,15 +1,15 @@
 """Create archive table
 
-Revision ID: dc858321fd15
+Revision ID: 5a29047cd9a9
 Revises:
-Create Date: 2020-06-26 18:08:18.808381
+Create Date: 2020-06-26 20:03:12.029736
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = 'dc858321fd15'
+revision = '5a29047cd9a9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,6 +21,12 @@ def upgrade() -> None:
         'archive',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('content', sa.LargeBinary(), nullable=False),
+        sa.Column(
+            'created',
+            sa.DateTime(timezone=True),
+            server_default=sa.text('(CURRENT_TIMESTAMP)'),
+            nullable=False,
+        ),
         sa.PrimaryKeyConstraint('id'),
     )
     # ### end Alembic commands ###

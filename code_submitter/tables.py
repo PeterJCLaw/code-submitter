@@ -7,4 +7,11 @@ Archive = sqlalchemy.Table(
     metadata,
     sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),  # noqa:A003
     sqlalchemy.Column('content', sqlalchemy.LargeBinary, nullable=False),
+
+    sqlalchemy.Column(
+        'created',
+        sqlalchemy.DateTime(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.func.now(),
+    ),
 )
