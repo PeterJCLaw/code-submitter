@@ -7,8 +7,14 @@ from starlette.applications import Starlette
 async def homepage(request: Request) -> HTMLResponse:
     return HTMLResponse('')
 
+
+async def upload(request: Request) -> HTMLResponse:
+    return HTMLResponse('')
+
+
 routes = [
-    Route('/', endpoint=homepage),
+    Route('/', endpoint=homepage, methods=['GET']),
+    Route('/upload', endpoint=upload, methods=['POST']),
 ]
 
 app = Starlette(routes=routes)
