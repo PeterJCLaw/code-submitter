@@ -38,5 +38,6 @@ setup(
     install_requires=[
         'starlette',
         'jinja2',
+        'python-multipart',
     ],
 )
