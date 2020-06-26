@@ -2,4 +2,4 @@
 if [ -z "$FLAKE8" ]; then
     FLAKE8=flake8
 fi
-exec "$FLAKE8" code_submitter tests "$@"
+exec "$FLAKE8" code_submitter tests setup.py "$@"
