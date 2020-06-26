@@ -1,14 +1,18 @@
 import io
+import asyncio
 import zipfile
 import tempfile
 import unittest
-from typing import IO
+from typing import IO, TypeVar, Awaitable
 
 import alembic  # type: ignore[import]
 from sqlalchemy import create_engine
 from alembic.config import Config  # type: ignore[import]
 from starlette.config import environ
 from starlette.testclient import TestClient
+from code_submitter.tables import Archive
+
+T = TypeVar('T')
 
 DATABASE_FILE: IO[bytes]
 
@@ -28,14 +32,19 @@ def setUpModule() -> None:
 
 
 class AppTests(unittest.TestCase):
+    def await_(self, awaitable: Awaitable[T]) -> T:
+        return self.loop.run_until_complete(awaitable)
+
     def setUp(self) -> None:
         super().setUp()
 
         # App import must happen after TESTING environment setup
-        from code_submitter.server import app
+        from code_submitter.server import app, database
 
         test_client = TestClient(app)
         self.session = test_client.__enter__()
+        self.database = database
+        self.loop = asyncio.get_event_loop()
 
     def tearDown(self) -> None:
         self.session.__exit__(None, None, None)
@@ -56,9 +65,29 @@ class AppTests(unittest.TestCase):
         )
         self.assertEqual(200, response.status_code)
 
+        archives = self.await_(
+            self.database.fetch_all(Archive.select()),
+        )
+
+        self.assertEqual(
+            [contents.getvalue()],
+            [x['content'] for x in archives],
+            "Wrong content stored in the database",
+        )
+
     def test_upload_bad_file(self) -> None:
         response = self.session.post(
             '/upload',
             files={'archive': ('whatever.zip', b'should-be-a-zip', 'application/zip')},
         )
         self.assertEqual(400, response.status_code)
+
+        count = self.await_(
+            self.database.fetch_val(Archive.count()),
+        )
+
+        self.assertEqual(
+            0,
+            count,
+            "Should not have stored anything in the databsae",
+        )
