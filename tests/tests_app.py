@@ -82,12 +82,8 @@ class AppTests(unittest.TestCase):
         )
         self.assertEqual(400, response.status_code)
 
-        count = self.await_(
-            self.database.fetch_val(Archive.count()),
+        archives = self.await_(
+            self.database.fetch_all(Archive.select()),
         )
 
-        self.assertEqual(
-            0,
-            count,
-            "Should not have stored anything in the databsae",
-        )
+        self.assertEqual([], archives, "Wrong content stored in the database")
