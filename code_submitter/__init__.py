@@ -1,3 +1,6 @@
+import io
+import zipfile
+
 from starlette.routing import Route
 from starlette.requests import Request
 from starlette.responses import Response
@@ -28,6 +31,11 @@ async def upload(request: Request) -> Response:
             "Uploaded files should always be bytes (not str). "
             "Why doesn't starlette enforce this?",
         )
+
+    try:
+        zipfile.ZipFile(io.BytesIO(contents))
+    except zipfile.BadZipFile:
+        return Response("Must upload a ZIP file", status_code=400)
 
     return Response('')
 

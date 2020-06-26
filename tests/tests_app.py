@@ -1,3 +1,5 @@
+import io
+import zipfile
 import unittest
 
 from code_submitter import app
@@ -20,8 +22,19 @@ class AppTests(unittest.TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_upload_file(self) -> None:
+        contents = io.BytesIO()
+        with zipfile.ZipFile(contents, mode='w') as zip_file:
+            zip_file.writestr('robot.py', 'print("I am a robot")')
+
+        response = self.session.post(
+            '/upload',
+            files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
+        )
+        self.assertEqual(200, response.status_code)
+
+    def test_upload_bad_file(self) -> None:
         response = self.session.post(
             '/upload',
             files={'archive': ('whatever.zip', b'should-be-a-zip', 'application/zip')},
         )
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(400, response.status_code)
