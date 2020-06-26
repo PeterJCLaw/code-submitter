@@ -1,15 +1,18 @@
 from starlette.routing import Route
 from starlette.requests import Request
-from starlette.responses import HTMLResponse
+from starlette.responses import Response
+from starlette.templating import Jinja2Templates
 from starlette.applications import Starlette
 
-
-async def homepage(request: Request) -> HTMLResponse:
-    return HTMLResponse('')
+templates = Jinja2Templates(directory='templates')
 
 
-async def upload(request: Request) -> HTMLResponse:
-    return HTMLResponse('')
+async def homepage(request: Request) -> Response:
+    return templates.TemplateResponse('index.html', {'request': request})
+
+
+async def upload(request: Request) -> Response:
+    return Response('')
 
 
 routes = [

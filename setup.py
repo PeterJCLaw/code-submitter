@@ -37,5 +37,6 @@ setup(
 
     install_requires=[
         'starlette',
+        'jinja2',
     ],
 )
