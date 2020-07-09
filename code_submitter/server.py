@@ -12,7 +12,7 @@ from starlette.datastructures import UploadFile
 from . import config
 from .tables import Archive
 
-database = databases.Database(config.DATABASE_URL)
+database = databases.Database(config.DATABASE_URL, force_rollback=config.TESTING)
 templates = Jinja2Templates(directory='templates')
 
 
