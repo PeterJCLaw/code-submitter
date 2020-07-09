@@ -136,6 +136,12 @@ class AppTests(unittest.TestCase):
             "Wrong username stored in the database",
         )
 
+        self.assertEqual(
+            ['SRZ'],
+            [x['team'] for x in archives],
+            "Wrong team stored in the database",
+        )
+
     def test_upload_bad_file(self) -> None:
         response = self.session.post(
             '/upload',
