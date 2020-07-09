@@ -63,7 +63,8 @@ class AppTests(unittest.TestCase):
             '/upload',
             files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
         )
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(302, response.status_code)
+        self.assertEqual('http://testserver/', response.headers['location'])
 
         archives = self.await_(
             self.database.fetch_all(Archive.select()),
