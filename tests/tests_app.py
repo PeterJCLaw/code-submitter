@@ -69,7 +69,17 @@ class AppTests(unittest.TestCase):
                 id=8888888888,
                 content=b'',
                 username='someone_else',
+                team='ABC',
                 created=datetime.datetime(2020, 8, 8, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=2222222222,
+                content=b'',
+                username='a_colleague',
+                team='SRZ',
+                created=datetime.datetime(2020, 2, 2, 12, 0),
             ),
         ))
         self.await_(self.database.execute(
@@ -77,6 +87,7 @@ class AppTests(unittest.TestCase):
                 id=1111111111,
                 content=b'',
                 username='test_user',
+                team='SRZ',
                 created=datetime.datetime(2020, 1, 1, 12, 0),
             ),
         ))
@@ -87,8 +98,15 @@ class AppTests(unittest.TestCase):
         html = response.text
         self.assertIn('2020-01-01', html)
         self.assertIn('1111111111', html)
+        self.assertIn('test_user', html)
+
+        self.assertIn('2020-02-02', html)
+        self.assertIn('2222222222', html)
+        self.assertIn('a_colleague', html)
+
         self.assertNotIn('2020-08-08', html)
         self.assertNotIn('8888888888', html)
+        self.assertNotIn('someone_else', html)
 
     def test_upload_file(self) -> None:
         contents = io.BytesIO()

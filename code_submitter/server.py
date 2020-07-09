@@ -27,11 +27,13 @@ async def homepage(request: Request) -> Response:
             [
                 Archive.c.id,
                 Archive.c.username,
+                Archive.c.team,
                 # omit content which is probably large and we don't need
                 Archive.c.created,
             ],
         ).where(
-            Archive.c.username == request.user.username,
+            Archive.c.username == request.user.username or
+            Archive.c.team == request.user.team,
         ),
     )
     return templates.TemplateResponse('index.html', {
@@ -68,6 +70,7 @@ async def upload(request: Request) -> Response:
         Archive.insert().values(
             content=contents,
             username=request.user.username,
+            team=request.user.team,
         ),
     )
 

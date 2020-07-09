@@ -1,8 +1,8 @@
 """Create archive table
 
-Revision ID: 84d522610b47
+Revision ID: eda5c539028e
 Revises:
-Create Date: 2020-07-09 15:54:08.022673
+Create Date: 2020-07-09 16:50:23.270703
 
 """
 import sqlalchemy as sa
@@ -10,7 +10,7 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision = '84d522610b47'
+revision = 'eda5c539028e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,7 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('content', sa.LargeBinary(), nullable=False),
         sa.Column('username', sa.String(), nullable=False),
+        sa.Column('team', sa.String(), nullable=False),
         sa.Column(
             'created',
             sa.DateTime(timezone=True),

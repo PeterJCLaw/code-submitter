@@ -9,6 +9,7 @@ Archive = sqlalchemy.Table(
     sqlalchemy.Column('content', sqlalchemy.LargeBinary, nullable=False),
 
     sqlalchemy.Column('username', sqlalchemy.String, nullable=False),
+    sqlalchemy.Column('team', sqlalchemy.String, nullable=False),
 
     sqlalchemy.Column(
         'created',

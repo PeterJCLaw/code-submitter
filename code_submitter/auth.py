@@ -5,14 +5,20 @@ from typing import Tuple, Optional, Sequence
 from starlette.requests import HTTPConnection
 from starlette.responses import Response
 from starlette.authentication import (
-    BaseUser,
     SimpleUser,
     AuthCredentials,
     AuthenticationError,
     AuthenticationBackend,
 )
 
-ValidationResult = Tuple[Sequence[str], BaseUser]
+
+class User(SimpleUser):
+    def __init__(self, username: str, team: str) -> None:
+        super().__init__(username)
+        self.team = team
+
+
+ValidationResult = Tuple[Sequence[str], User]
 
 
 def auth_required_response(conn: HTTPConnection, exc: Exception) -> Response:
@@ -44,7 +50,7 @@ class BasicAuthBackend(AuthenticationBackend):
     async def authenticate(
         self,
         request: HTTPConnection,
-    ) -> Optional[Tuple[AuthCredentials, BaseUser]]:
+    ) -> Optional[Tuple[AuthCredentials, User]]:
         auth_header = request.headers.get('Authorization')
         if not auth_header:
             raise AuthenticationError("Bees")
@@ -60,4 +66,4 @@ class DummyBackend(BasicAuthBackend):
             raise AuthenticationError("Must provide a username")
         if not password:
             raise AuthenticationError("Must provide a password")
-        return ['authenticated'], SimpleUser(username)
+        return ['authenticated'], User(username, 'SRZ')
