@@ -6,6 +6,12 @@
 
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.mypyArgs": [
+        // Work around the defaults changing the import checking behaviour
+        "--show-column-numbers",
+    ],
     "python.linting.pylintEnabled": false,
+
     "python.pythonPath": "${env:VIRTUAL_ENV}/bin/python3",
 }
