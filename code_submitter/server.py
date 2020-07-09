@@ -5,21 +5,26 @@ import databases
 from starlette.routing import Route
 from starlette.requests import Request
 from starlette.responses import Response, RedirectResponse
+from starlette.middleware import Middleware
 from starlette.templating import Jinja2Templates
 from starlette.applications import Starlette
+from starlette.authentication import requires
 from starlette.datastructures import UploadFile
+from starlette.middleware.authentication import AuthenticationMiddleware
 
-from . import config
+from . import auth, config
 from .tables import Archive
 
 database = databases.Database(config.DATABASE_URL, force_rollback=config.TESTING)
 templates = Jinja2Templates(directory='templates')
 
 
+@requires('authenticated')
 async def homepage(request: Request) -> Response:
     return templates.TemplateResponse('index.html', {'request': request})
 
 
+@requires('authenticated')
 async def upload(request: Request) -> Response:
     form = await request.form()
     archive = form['archive']
@@ -52,14 +57,22 @@ async def upload(request: Request) -> Response:
         status_code=302,
     )
 
-
 routes = [
     Route('/', endpoint=homepage, methods=['GET']),
     Route('/upload', endpoint=upload, methods=['POST']),
+]
+
+middleware = [
+    Middleware(
+        AuthenticationMiddleware,
+        backend=config.get_auth_backend(),
+        on_error=auth.auth_required_response,
+    ),
 ]
 
 app = Starlette(
     routes=routes,
     on_startup=[database.connect],
     on_shutdown=[database.disconnect],
+    middleware=middleware,
 )

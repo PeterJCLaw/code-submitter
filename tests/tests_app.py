@@ -43,6 +43,7 @@ class AppTests(unittest.TestCase):
 
         test_client = TestClient(app)
         self.session = test_client.__enter__()
+        self.session.auth = ('user', 'pass')
         self.database = database
         self.loop = asyncio.get_event_loop()
 
@@ -53,6 +54,13 @@ class AppTests(unittest.TestCase):
     def test_app(self) -> None:
         response = self.session.get('/')
         self.assertEqual(200, response.status_code)
+
+    def test_app_requires_auth(self) -> None:
+        self.session.auth = None
+        response = self.session.get('/')
+        self.assertEqual(401, response.status_code)
+        self.assertIn('WWW-Authenticate', response.headers)
+        self.assertIn(' realm=', response.headers['WWW-Authenticate'])
 
     def test_upload_file(self) -> None:
         contents = io.BytesIO()
