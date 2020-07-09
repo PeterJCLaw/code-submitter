@@ -43,7 +43,7 @@ class AppTests(unittest.TestCase):
 
         test_client = TestClient(app)
         self.session = test_client.__enter__()
-        self.session.auth = ('user', 'pass')
+        self.session.auth = ('test_user', 'test_pass')
         self.database = database
         self.loop = asyncio.get_event_loop()
 
@@ -82,6 +82,12 @@ class AppTests(unittest.TestCase):
             [contents.getvalue()],
             [x['content'] for x in archives],
             "Wrong content stored in the database",
+        )
+
+        self.assertEqual(
+            ['test_user'],
+            [x['username'] for x in archives],
+            "Wrong username stored in the database",
         )
 
     def test_upload_bad_file(self) -> None:

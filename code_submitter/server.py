@@ -48,7 +48,10 @@ async def upload(request: Request) -> Response:
         return Response("Must upload a ZIP file", status_code=400)
 
     await database.execute(
-        Archive.insert().values(content=contents),
+        Archive.insert().values(
+            content=contents,
+            username=request.user.username,
+        ),
     )
 
     return RedirectResponse(
