@@ -14,7 +14,12 @@
     <div class="container">
       <h1>Virtual Competition Code Submission</h1>
       <div class="row">
-        <form action="{{ url_for('upload') }}" method="POST" class="col-sm-6">
+        <form
+          class="col-sm-6"
+          action="{{ url_for('upload') }}"
+          enctype="multipart/form-data"
+          method="POST"
+        >
           <div class="form-group">
             <label for="archive"> Select ZIP archive </label>
             <input
