@@ -65,6 +65,7 @@ class AppTests(unittest.TestCase):
 
     def test_shows_own_and_own_team_uploads(self) -> None:
         self.await_(self.database.execute(
+            # Another team's archive we shouldn't be able to see.
             Archive.insert().values(
                 id=8888888888,
                 content=b'',
