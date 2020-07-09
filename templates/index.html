@@ -9,6 +9,12 @@
       integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
       crossorigin="anonymous"
     />
+
+    <style type="text/css">
+      .row {
+        margin-top: 2em;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -20,6 +26,7 @@
           enctype="multipart/form-data"
           method="POST"
         >
+          <h3>Upload a new submission</h3>
           <div class="form-group">
             <label for="archive"> Select ZIP archive </label>
             <input
@@ -33,6 +40,25 @@
           </div>
           <button class="btn btn-primary" type="submit">Upload</button>
         </form>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <h3>Your uploads</h3>
+          <table class="table">
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">Uploaded</th>
+              <th scope="col">By</th>
+            </tr>
+            {% for upload in uploads %}
+            <tr>
+              <td>{{ upload.id }}</td>
+              <td>{{ upload.created }}</td>
+              <td>{{ upload.username }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
       </div>
     </div>
   </body>

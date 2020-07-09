@@ -2,6 +2,7 @@ import io
 import zipfile
 
 import databases
+from sqlalchemy.sql import select
 from starlette.routing import Route
 from starlette.requests import Request
 from starlette.responses import Response, RedirectResponse
@@ -21,7 +22,22 @@ templates = Jinja2Templates(directory='templates')
 
 @requires('authenticated')
 async def homepage(request: Request) -> Response:
-    return templates.TemplateResponse('index.html', {'request': request})
+    uploads = await database.fetch_all(
+        select(
+            [
+                Archive.c.id,
+                Archive.c.username,
+                # omit content which is probably large and we don't need
+                Archive.c.created,
+            ],
+        ).where(
+            Archive.c.username == request.user.username,
+        ),
+    )
+    return templates.TemplateResponse('index.html', {
+        'request': request,
+        'uploads': uploads,
+    })
 
 
 @requires('authenticated')

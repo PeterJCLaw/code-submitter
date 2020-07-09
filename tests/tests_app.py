@@ -1,6 +1,7 @@
 import io
 import asyncio
 import zipfile
+import datetime
 import tempfile
 import unittest
 from typing import IO, TypeVar, Awaitable
@@ -61,6 +62,33 @@ class AppTests(unittest.TestCase):
         self.assertEqual(401, response.status_code)
         self.assertIn('WWW-Authenticate', response.headers)
         self.assertIn(' realm=', response.headers['WWW-Authenticate'])
+
+    def test_shows_own_and_own_team_uploads(self) -> None:
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=8888888888,
+                content=b'',
+                username='someone_else',
+                created=datetime.datetime(2020, 8, 8, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=1111111111,
+                content=b'',
+                username='test_user',
+                created=datetime.datetime(2020, 1, 1, 12, 0),
+            ),
+        ))
+
+        response = self.session.get('/')
+        self.assertEqual(200, response.status_code)
+
+        html = response.text
+        self.assertIn('2020-01-01', html)
+        self.assertIn('1111111111', html)
+        self.assertNotIn('2020-08-08', html)
+        self.assertNotIn('8888888888', html)
 
     def test_upload_file(self) -> None:
         contents = io.BytesIO()
