@@ -25,6 +25,7 @@ async def homepage(request: Request) -> Response:
 
 
 @requires('authenticated')
+@database.transaction()
 async def upload(request: Request) -> Response:
     form = await request.form()
     archive = form['archive']
