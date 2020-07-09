@@ -34,6 +34,8 @@ async def homepage(request: Request) -> Response:
         ).where(
             Archive.c.username == request.user.username or
             Archive.c.team == request.user.team,
+        ).order_by(
+            Archive.c.created.desc(),
         ),
     )
     return templates.TemplateResponse('index.html', {
