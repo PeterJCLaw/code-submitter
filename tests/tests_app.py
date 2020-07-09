@@ -5,13 +5,14 @@ import datetime
 import tempfile
 import unittest
 from typing import IO, TypeVar, Awaitable
+from unittest import mock
 
 import alembic  # type: ignore[import]
 from sqlalchemy import create_engine
 from alembic.config import Config  # type: ignore[import]
 from starlette.config import environ
 from starlette.testclient import TestClient
-from code_submitter.tables import Archive
+from code_submitter.tables import Archive, ChoiceHistory
 
 T = TypeVar('T')
 
@@ -109,6 +110,72 @@ class AppTests(unittest.TestCase):
         self.assertNotIn('8888888888', html)
         self.assertNotIn('someone_else', html)
 
+    def test_shows_chosen_archive(self) -> None:
+        self.await_(self.database.execute(
+            # Another team's archive we shouldn't be able to see.
+            Archive.insert().values(
+                id=8888888888,
+                content=b'',
+                username='someone_else',
+                team='ABC',
+                created=datetime.datetime(2020, 8, 8, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=2222222222,
+                content=b'',
+                username='a_colleague',
+                team='SRZ',
+                created=datetime.datetime(2020, 2, 2, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=1111111111,
+                content=b'',
+                username='test_user',
+                team='SRZ',
+                created=datetime.datetime(2020, 1, 1, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            # An invalid choice -- you shouldn't be able to select archives for
+            # another team.
+            ChoiceHistory.insert().values(
+                archive_id=8888888888,
+                username='test_user',
+                created=datetime.datetime(2020, 9, 9, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=2222222222,
+                username='test_user',
+                created=datetime.datetime(2020, 3, 3, 12, 0),
+            ),
+        ))
+
+        response = self.session.get('/')
+        self.assertEqual(200, response.status_code)
+
+        html = response.text
+        self.assertIn('2020-01-01', html)
+        self.assertIn('1111111111', html)
+        self.assertIn('test_user', html)
+
+        self.assertIn('2020-02-02', html)
+        self.assertIn('2222222222', html)
+        self.assertIn('a_colleague', html)
+
+        self.assertIn('2020-03-03', html)
+
+        self.assertNotIn('2020-08-08', html)
+        self.assertNotIn('8888888888', html)
+        self.assertNotIn('someone_else', html)
+
+        self.assertNotIn('2020-09-09', html)
+
     def test_upload_file(self) -> None:
         contents = io.BytesIO()
         with zipfile.ZipFile(contents, mode='w') as zip_file:
@@ -143,6 +210,48 @@ class AppTests(unittest.TestCase):
             "Wrong team stored in the database",
         )
 
+        choices = self.await_(
+            self.database.fetch_all(ChoiceHistory.select()),
+        )
+        self.assertEqual([], choices, "Should not have created a choice")
+
+    def test_upload_and_choose_file(self) -> None:
+        contents = io.BytesIO()
+        with zipfile.ZipFile(contents, mode='w') as zip_file:
+            zip_file.writestr('robot.py', 'print("I am a robot")')
+
+        response = self.session.post(
+            '/upload',
+            data={'choose': 'on'},
+            files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
+        )
+        self.assertEqual(302, response.status_code)
+        self.assertEqual('http://testserver/', response.headers['location'])
+
+        archive, = self.await_(
+            self.database.fetch_all(Archive.select()),
+        )
+
+        self.assertEqual(
+            contents.getvalue(),
+            archive['content'],
+            "Wrong content stored in the database",
+        )
+
+        choices = self.await_(
+            self.database.fetch_all(ChoiceHistory.select()),
+        )
+        self.assertEqual(
+            [{
+                'archive_id': archive['id'],
+                'username': 'test_user',
+                'id': mock.ANY,
+                'created': mock.ANY,
+            }],
+            [dict(x) for x in choices],
+            "Should not have created a choice",
+        )
+
     def test_upload_bad_file(self) -> None:
         response = self.session.post(
             '/upload',
@@ -155,3 +264,8 @@ class AppTests(unittest.TestCase):
         )
 
         self.assertEqual([], archives, "Wrong content stored in the database")
+
+        choices = self.await_(
+            self.database.fetch_all(ChoiceHistory.select()),
+        )
+        self.assertEqual([], choices, "Should not have created a choice")

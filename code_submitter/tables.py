@@ -18,3 +18,19 @@ Archive = sqlalchemy.Table(
         server_default=sqlalchemy.func.now(),
     ),
 )
+
+ChoiceHistory = sqlalchemy.Table(
+    'choice_history',
+    metadata,
+    sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),  # noqa:A003
+    sqlalchemy.Column('archive_id', sqlalchemy.ForeignKey('archive.id'), nullable=False),
+
+    sqlalchemy.Column('username', sqlalchemy.String, nullable=False),
+
+    sqlalchemy.Column(
+        'created',
+        sqlalchemy.DateTime(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.func.now(),
+    ),
+)

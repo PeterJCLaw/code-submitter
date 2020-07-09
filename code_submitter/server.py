@@ -14,7 +14,7 @@ from starlette.datastructures import UploadFile
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from . import auth, config
-from .tables import Archive
+from .tables import Archive, ChoiceHistory
 
 database = databases.Database(config.DATABASE_URL, force_rollback=config.TESTING)
 templates = Jinja2Templates(directory='templates')
@@ -22,6 +22,15 @@ templates = Jinja2Templates(directory='templates')
 
 @requires('authenticated')
 async def homepage(request: Request) -> Response:
+    chosen = await database.fetch_one(
+        select([ChoiceHistory]).select_from(
+            ChoiceHistory.join(Archive),
+        ).where(
+            Archive.c.team == request.user.team,
+        ).order_by(
+            ChoiceHistory.c.created.desc(),
+        ),
+    )
     uploads = await database.fetch_all(
         select(
             [
@@ -40,6 +49,7 @@ async def homepage(request: Request) -> Response:
     )
     return templates.TemplateResponse('index.html', {
         'request': request,
+        'chosen': chosen,
         'uploads': uploads,
     })
 
@@ -68,13 +78,20 @@ async def upload(request: Request) -> Response:
     except zipfile.BadZipFile:
         return Response("Must upload a ZIP file", status_code=400)
 
-    await database.execute(
+    archive_id = await database.execute(
         Archive.insert().values(
             content=contents,
             username=request.user.username,
             team=request.user.team,
         ),
     )
+    if form.get('choose'):
+        await database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=archive_id,
+                username=request.user.username,
+            ),
+        )
 
     return RedirectResponse(
         request.url_for('homepage'),

@@ -14,6 +14,17 @@
       .row {
         margin-top: 2em;
       }
+      tr.chosen .info {
+        display: none;
+      }
+      tr.chosen:hover .info {
+        display: block;
+        border: 1px solid silver;
+        position: absolute;
+        width: fit-content;
+        padding: 0.2em 0.5em;
+        background: aliceblue;
+      }
     </style>
   </head>
   <body>
@@ -38,6 +49,18 @@
               required
             />
           </div>
+          <div class="form-group form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="choose"
+              id="choose"
+              checked
+            />
+            <label class="form-check-label" for="choose">
+              Update selection to use this archive
+            </label>
+          </div>
           <button class="btn btn-primary" type="submit">Upload</button>
         </form>
       </div>
@@ -49,12 +72,23 @@
               <th scope="col">Id</th>
               <th scope="col">Uploaded</th>
               <th scope="col">By</th>
+              <th scope="col">Selected</th>
             </tr>
             {% for upload in uploads %}
-            <tr>
+            <tr
+              class="{% if upload.id == chosen.archive_id %}chosen{% endif %}"
+            >
               <td>{{ upload.id }}</td>
               <td>{{ upload.created }}</td>
               <td>{{ upload.username }}</td>
+              <td>
+                {% if upload.id == chosen.archive_id %}
+                <span>★</span>
+                <span class="info">
+                  Chosen by {{ chosen.username }} at {{ chosen.created }}
+                </span>
+                {% endif %}
+              </td>
             </tr>
             {% endfor %}
           </table>
