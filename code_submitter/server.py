@@ -72,8 +72,11 @@ async def upload(request: Request) -> Response:
     if not isinstance(archive, UploadFile):
         return Response("Must upload a file", status_code=400)
 
-    if archive.content_type != 'application/zip':
-        return Response("Must upload a ZIP file", status_code=400)
+    if archive.content_type not in ('application/zip', 'application/x-zip-compressed'):
+        return Response(
+            "Must upload a ZIP file, not {!r}".format(archive.content_type),
+            status_code=400,
+        )
 
     contents = await archive.read()
     if isinstance(contents, str):
