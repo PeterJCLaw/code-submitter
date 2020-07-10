@@ -39,6 +39,10 @@
           method="POST"
         >
           <h3>Upload a new submission for team {{ request.user.team }}</h3>
+          <p>
+            Your submission must include a <code>robot.py</code> file in the
+            root of the ZIP archive.
+          </p>
           <div class="form-group">
             <label for="archive">Select ZIP archive</label>
             <input
