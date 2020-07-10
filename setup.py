@@ -43,5 +43,6 @@ setup(
         'databases[sqlite]',
         'sqlalchemy',
         'alembic',
+        'httpx',
     ],
 )
