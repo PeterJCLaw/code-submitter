@@ -61,9 +61,12 @@ class BasicAuthBackend(AuthenticationBackend):
 
 
 class DummyBackend(BasicAuthBackend):
+    def __init__(self, team: str = 'SRZ') -> None:
+        self.team = team
+
     async def validate(self, username: str, password: str) -> ValidationResult:
         if not username:
             raise AuthenticationError("Must provide a username")
         if not password:
             raise AuthenticationError("Must provide a password")
-        return ['authenticated'], User(username, 'SRZ')
+        return ['authenticated'], User(username, self.team)
