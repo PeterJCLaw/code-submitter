@@ -64,6 +64,9 @@ class AppTests(unittest.TestCase):
         response = self.session.get(self.url_path_for('homepage'))
         self.assertEqual(200, response.status_code)
 
+        html = response.text
+        self.assertIn("Upload a new submission", html)
+
     def test_app_requires_auth(self) -> None:
         self.session.auth = None
         response = self.session.get(self.url_path_for('homepage'))

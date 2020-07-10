@@ -31,13 +31,14 @@
     <div class="container">
       <h1>Virtual Competition Code Submission</h1>
       <div class="row">
+        {% if request.user.team %}
         <form
           class="col-sm-6"
           action="{{ request.app.url_path_for('upload') }}"
           enctype="multipart/form-data"
           method="POST"
         >
-          <h3>Upload a new submission</h3>
+          <h3>Upload a new submission for team {{ request.user.team }}</h3>
           <div class="form-group">
             <label for="archive"> Select ZIP archive </label>
             <input
@@ -63,6 +64,9 @@
           </div>
           <button class="btn btn-primary" type="submit">Upload</button>
         </form>
+        {% else %}
+        <em>You are not in a team and so cannot upload files.</em>
+        {% endif %}
       </div>
       <div class="row">
         <div class="col-sm-6">

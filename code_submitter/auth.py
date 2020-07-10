@@ -13,7 +13,7 @@ from starlette.authentication import (
 
 
 class User(SimpleUser):
-    def __init__(self, username: str, team: str) -> None:
+    def __init__(self, username: str, team: Optional[str]) -> None:
         super().__init__(username)
         self.team = team
 
@@ -61,7 +61,7 @@ class BasicAuthBackend(AuthenticationBackend):
 
 
 class DummyBackend(BasicAuthBackend):
-    def __init__(self, team: str = 'SRZ') -> None:
+    def __init__(self, team: Optional[str] = 'SRZ') -> None:
         self.team = team
 
     async def validate(self, username: str, password: str) -> ValidationResult:

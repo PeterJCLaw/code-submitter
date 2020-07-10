@@ -14,6 +14,7 @@ from starlette.datastructures import UploadFile
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from . import auth, config
+from .auth import User
 from .tables import Archive, ChoiceHistory
 
 database = databases.Database(config.DATABASE_URL, force_rollback=config.TESTING)
@@ -57,6 +58,14 @@ async def homepage(request: Request) -> Response:
 @requires('authenticated')
 @database.transaction()
 async def upload(request: Request) -> Response:
+    user: User = request.user
+
+    if not user.team:
+        return Response(
+            "Must be a member of a team to be able to upload files",
+            status_code=403,
+        )
+
     form = await request.form()
     archive = form['archive']
 
