@@ -277,3 +277,24 @@ class AppTests(test_utils.AsyncTestCase):
             self.database.fetch_all(ChoiceHistory.select()),
         )
         self.assertEqual([], choices, "Should not have created a choice")
+
+    def test_upload_archive_without_robot_py(self) -> None:
+        contents = io.BytesIO()
+        with zipfile.ZipFile(contents, mode='w') as zip_file:
+            zip_file.writestr('main.py', 'print("I am a robot")')
+
+        response = self.session.post(
+            self.url_path_for('upload'),
+            files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
+        )
+        self.assertEqual(400, response.status_code)
+
+        archives = self.await_(
+            self.database.fetch_all(Archive.select()),
+        )
+        self.assertEqual([], archives, "Wrong content stored in the database")
+
+        choices = self.await_(
+            self.database.fetch_all(ChoiceHistory.select()),
+        )
+        self.assertEqual([], choices, "Should not have created a choice")
