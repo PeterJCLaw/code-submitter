@@ -34,7 +34,7 @@
         {% if request.user.team %}
         <form
           class="col-sm-6"
-          action="{{ request.app.url_path_for('upload') }}"
+          action="{{ url_for('upload') }}"
           enctype="multipart/form-data"
           method="POST"
         >

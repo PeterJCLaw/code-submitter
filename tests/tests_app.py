@@ -43,10 +43,16 @@ class AppTests(test_utils.AsyncTestCase):
         # App import must happen after TESTING environment setup
         from code_submitter.server import app, database
 
+        def url_for(name: str) -> str:
+            # While it makes for uglier tests, we do need to use more absolute
+            # paths here so that the urls emitted contain the root_path from the
+            # ASGI server and in turn work correctly under proxy.
+            return 'http://testserver{}'.format(app.url_path_for(name))
+
         test_client = TestClient(app)
         self.session = test_client.__enter__()
         self.session.auth = ('test_user', 'test_pass')
-        self.url_path_for = app.url_path_for
+        self.url_for = url_for
         self.database = database
 
     def tearDown(self) -> None:
@@ -54,7 +60,7 @@ class AppTests(test_utils.AsyncTestCase):
         super().tearDown()
 
     def test_app(self) -> None:
-        response = self.session.get(self.url_path_for('homepage'))
+        response = self.session.get(self.url_for('homepage'))
         self.assertEqual(200, response.status_code)
 
         html = response.text
@@ -62,7 +68,7 @@ class AppTests(test_utils.AsyncTestCase):
 
     def test_app_requires_auth(self) -> None:
         self.session.auth = None
-        response = self.session.get(self.url_path_for('homepage'))
+        response = self.session.get(self.url_for('homepage'))
         self.assertEqual(401, response.status_code)
         self.assertIn('WWW-Authenticate', response.headers)
         self.assertIn(' realm=', response.headers['WWW-Authenticate'])
@@ -97,7 +103,7 @@ class AppTests(test_utils.AsyncTestCase):
             ),
         ))
 
-        response = self.session.get(self.url_path_for('homepage'))
+        response = self.session.get(self.url_for('homepage'))
         self.assertEqual(200, response.status_code)
 
         html = response.text
@@ -159,7 +165,7 @@ class AppTests(test_utils.AsyncTestCase):
             ),
         ))
 
-        response = self.session.get(self.url_path_for('homepage'))
+        response = self.session.get(self.url_for('homepage'))
         self.assertEqual(200, response.status_code)
 
         html = response.text
@@ -185,12 +191,12 @@ class AppTests(test_utils.AsyncTestCase):
             zip_file.writestr('robot.py', 'print("I am a robot")')
 
         response = self.session.post(
-            self.url_path_for('upload'),
+            self.url_for('upload'),
             files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
         )
         self.assertEqual(302, response.status_code)
         self.assertEqual(
-            self.url_path_for('homepage'),
+            self.url_for('homepage'),
             response.headers['location'],
         )
 
@@ -227,13 +233,13 @@ class AppTests(test_utils.AsyncTestCase):
             zip_file.writestr('robot.py', 'print("I am a robot")')
 
         response = self.session.post(
-            self.url_path_for('upload'),
+            self.url_for('upload'),
             data={'choose': 'on'},
             files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
         )
         self.assertEqual(302, response.status_code)
         self.assertEqual(
-            self.url_path_for('homepage'),
+            self.url_for('homepage'),
             response.headers['location'],
         )
 
@@ -263,7 +269,7 @@ class AppTests(test_utils.AsyncTestCase):
 
     def test_upload_bad_file(self) -> None:
         response = self.session.post(
-            self.url_path_for('upload'),
+            self.url_for('upload'),
             files={'archive': ('whatever.zip', b'should-be-a-zip', 'application/zip')},
         )
         self.assertEqual(400, response.status_code)
@@ -284,7 +290,7 @@ class AppTests(test_utils.AsyncTestCase):
             zip_file.writestr('main.py', 'print("I am a robot")')
 
         response = self.session.post(
-            self.url_path_for('upload'),
+            self.url_for('upload'),
             files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
         )
         self.assertEqual(400, response.status_code)

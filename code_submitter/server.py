@@ -111,7 +111,7 @@ async def upload(request: Request) -> Response:
         )
 
     return RedirectResponse(
-        app.url_path_for('homepage'),
+        request.url_for('homepage'),
         # 302 so that the browser switches to GET
         status_code=302,
     )
