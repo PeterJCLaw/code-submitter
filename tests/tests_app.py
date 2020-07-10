@@ -1,4 +1,5 @@
 import io
+import json
 import asyncio
 import zipfile
 import datetime
@@ -27,6 +28,11 @@ def setUpModule() -> None:
 
     environ['TESTING'] = 'True'
     environ['DATABASE_URL'] = url
+
+    environ['AUTH_BACKEND'] = json.dumps({
+        'backend': 'code_submitter.auth.DummyBackend',
+        'kwargs': {'team': 'SRZ2'},
+    })
 
     create_engine(url)
 
@@ -81,7 +87,7 @@ class AppTests(unittest.TestCase):
                 id=2222222222,
                 content=b'',
                 username='a_colleague',
-                team='SRZ',
+                team='SRZ2',
                 created=datetime.datetime(2020, 2, 2, 12, 0),
             ),
         ))
@@ -90,7 +96,7 @@ class AppTests(unittest.TestCase):
                 id=1111111111,
                 content=b'',
                 username='test_user',
-                team='SRZ',
+                team='SRZ2',
                 created=datetime.datetime(2020, 1, 1, 12, 0),
             ),
         ))
@@ -127,7 +133,7 @@ class AppTests(unittest.TestCase):
                 id=2222222222,
                 content=b'',
                 username='a_colleague',
-                team='SRZ',
+                team='SRZ2',
                 created=datetime.datetime(2020, 2, 2, 12, 0),
             ),
         ))
@@ -136,7 +142,7 @@ class AppTests(unittest.TestCase):
                 id=1111111111,
                 content=b'',
                 username='test_user',
-                team='SRZ',
+                team='SRZ2',
                 created=datetime.datetime(2020, 1, 1, 12, 0),
             ),
         ))
@@ -209,7 +215,7 @@ class AppTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            ['SRZ'],
+            ['SRZ2'],
             [x['team'] for x in archives],
             "Wrong team stored in the database",
         )
