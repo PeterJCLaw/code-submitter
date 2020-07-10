@@ -18,6 +18,12 @@ Run the checks:
 $ ./script/check
 ```
 
+Create/update the database schema:
+
+``` shell
+alembic upgrade head
+```
+
 Run the server:
 
 ``` shell
