@@ -1,21 +1,18 @@
 import io
 import json
-import asyncio
 import zipfile
 import datetime
 import tempfile
-import unittest
-from typing import IO, TypeVar, Awaitable
+from typing import IO
 from unittest import mock
 
 import alembic  # type: ignore[import]
+import test_utils
 from sqlalchemy import create_engine
 from alembic.config import Config  # type: ignore[import]
 from starlette.config import environ
 from starlette.testclient import TestClient
 from code_submitter.tables import Archive, ChoiceHistory
-
-T = TypeVar('T')
 
 DATABASE_FILE: IO[bytes]
 
@@ -39,10 +36,7 @@ def setUpModule() -> None:
     alembic.command.upgrade(Config('alembic.ini'), 'head')
 
 
-class AppTests(unittest.TestCase):
-    def await_(self, awaitable: Awaitable[T]) -> T:
-        return self.loop.run_until_complete(awaitable)
-
+class AppTests(test_utils.AsyncTestCase):
     def setUp(self) -> None:
         super().setUp()
 
@@ -54,7 +48,6 @@ class AppTests(unittest.TestCase):
         self.session.auth = ('test_user', 'test_pass')
         self.url_path_for = app.url_path_for
         self.database = database
-        self.loop = asyncio.get_event_loop()
 
     def tearDown(self) -> None:
         self.session.__exit__(None, None, None)
