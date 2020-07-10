@@ -91,13 +91,19 @@ NemesisUserInfo = TypedDict('NemesisUserInfo', {
 
 
 class NemesisBackend(BasicAuthBackend):
-    def __init__(self, _target: Optional[Starlette] = None, *, url: str) -> None:
+    def __init__(
+        self,
+        _target: Optional[Starlette] = None,
+        *,
+        url: str,
+        verify: bool = True,
+    ) -> None:
         # Munge types to cope with httpx not supporting strict_optional but
         # actually being fine with given `None`. Note we expect only to pass
         # this value in tests, so need to cope with it being `None` most of the
         # time anyway.
         app = cast(Starlette, _target)
-        self.client = httpx.AsyncClient(base_url=url, app=app)
+        self.client = httpx.AsyncClient(base_url=url, app=app, verify=verify)
 
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
         async with self.client as client:
