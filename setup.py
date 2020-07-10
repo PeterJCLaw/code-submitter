@@ -6,6 +6,13 @@ my_dir = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(my_dir, 'README.md')) as f:
     long_description = f.read()
 
+with open(os.path.join(my_dir, 'requirements.in')) as f:
+    install_requires = [
+        x.partition('#')[0].strip()
+        for x in f.readlines()
+    ]
+    install_requires = [x for x in install_requires if x]
+
 
 setup(
     name='code-submitter',
@@ -36,13 +43,5 @@ setup(
     ),
     python_requires='>=3.6',
 
-    install_requires=[
-        'starlette',
-        'jinja2',
-        'python-multipart',
-        'databases[sqlite]',
-        'sqlalchemy',
-        'alembic',
-        'httpx',
-    ],
+    install_requires=install_requires,
 )

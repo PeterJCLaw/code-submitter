@@ -5,3 +5,5 @@
 -r release/requirements.txt
 -r testing/requirements.txt
 -r typing/requirements.txt
+
+pip-tools
