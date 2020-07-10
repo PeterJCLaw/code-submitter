@@ -33,7 +33,7 @@
       <div class="row">
         <form
           class="col-sm-6"
-          action="{{ url_for('upload') }}"
+          action="{{ request.app.url_path_for('upload') }}"
           enctype="multipart/form-data"
           method="POST"
         >

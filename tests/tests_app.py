@@ -46,6 +46,7 @@ class AppTests(unittest.TestCase):
         test_client = TestClient(app)
         self.session = test_client.__enter__()
         self.session.auth = ('test_user', 'test_pass')
+        self.url_path_for = app.url_path_for
         self.database = database
         self.loop = asyncio.get_event_loop()
 
@@ -54,12 +55,12 @@ class AppTests(unittest.TestCase):
         super().tearDown()
 
     def test_app(self) -> None:
-        response = self.session.get('/')
+        response = self.session.get(self.url_path_for('homepage'))
         self.assertEqual(200, response.status_code)
 
     def test_app_requires_auth(self) -> None:
         self.session.auth = None
-        response = self.session.get('/')
+        response = self.session.get(self.url_path_for('homepage'))
         self.assertEqual(401, response.status_code)
         self.assertIn('WWW-Authenticate', response.headers)
         self.assertIn(' realm=', response.headers['WWW-Authenticate'])
@@ -94,7 +95,7 @@ class AppTests(unittest.TestCase):
             ),
         ))
 
-        response = self.session.get('/')
+        response = self.session.get(self.url_path_for('homepage'))
         self.assertEqual(200, response.status_code)
 
         html = response.text
@@ -156,7 +157,7 @@ class AppTests(unittest.TestCase):
             ),
         ))
 
-        response = self.session.get('/')
+        response = self.session.get(self.url_path_for('homepage'))
         self.assertEqual(200, response.status_code)
 
         html = response.text
@@ -182,11 +183,14 @@ class AppTests(unittest.TestCase):
             zip_file.writestr('robot.py', 'print("I am a robot")')
 
         response = self.session.post(
-            '/upload',
+            self.url_path_for('upload'),
             files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
         )
         self.assertEqual(302, response.status_code)
-        self.assertEqual('http://testserver/', response.headers['location'])
+        self.assertEqual(
+            self.url_path_for('homepage'),
+            response.headers['location'],
+        )
 
         archives = self.await_(
             self.database.fetch_all(Archive.select()),
@@ -221,12 +225,15 @@ class AppTests(unittest.TestCase):
             zip_file.writestr('robot.py', 'print("I am a robot")')
 
         response = self.session.post(
-            '/upload',
+            self.url_path_for('upload'),
             data={'choose': 'on'},
             files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
         )
         self.assertEqual(302, response.status_code)
-        self.assertEqual('http://testserver/', response.headers['location'])
+        self.assertEqual(
+            self.url_path_for('homepage'),
+            response.headers['location'],
+        )
 
         archive, = self.await_(
             self.database.fetch_all(Archive.select()),
@@ -254,7 +261,7 @@ class AppTests(unittest.TestCase):
 
     def test_upload_bad_file(self) -> None:
         response = self.session.post(
-            '/upload',
+            self.url_path_for('upload'),
             files={'archive': ('whatever.zip', b'should-be-a-zip', 'application/zip')},
         )
         self.assertEqual(400, response.status_code)
