@@ -29,7 +29,8 @@ ValidationResult = Tuple[Sequence[str], User]
 
 def auth_required_response(conn: HTTPConnection, exc: Exception) -> Response:
     return Response(
-        headers={'WWW-Authenticate': 'Basic realm=Code Submitter'},
+        "You must login to submit code.",
+        headers={'WWW-Authenticate': 'Basic realm="Student Robotics\' Code Submitter"'},
         status_code=401,
     )
 
