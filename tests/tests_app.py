@@ -271,7 +271,6 @@ class AppTests(test_utils.AsyncTestCase):
         archives = self.await_(
             self.database.fetch_all(Archive.select()),
         )
-
         self.assertEqual([], archives, "Wrong content stored in the database")
 
         choices = self.await_(
