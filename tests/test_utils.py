@@ -1,8 +1,44 @@
+import json
 import asyncio
+import tempfile
 import unittest
-from typing import TypeVar, Awaitable
+from typing import IO, TypeVar, Awaitable
+
+import alembic  # type: ignore[import]
+import databases
+from sqlalchemy import create_engine
+from alembic.config import Config  # type: ignore[import]
+from starlette.config import environ
 
 T = TypeVar('T')
+
+
+DATABASE_FILE: IO[bytes]
+
+
+def ensure_database_configured() -> None:
+    global DATABASE_FILE
+
+    try:
+        DATABASE_FILE
+        return
+    except NameError:
+        pass
+
+    DATABASE_FILE = tempfile.NamedTemporaryFile(suffix='sqlite.db')
+    url = 'sqlite:///{}'.format(DATABASE_FILE.name)
+
+    environ['TESTING'] = 'True'
+    environ['DATABASE_URL'] = url
+
+    environ['AUTH_BACKEND'] = json.dumps({
+        'backend': 'code_submitter.auth.DummyBackend',
+        'kwargs': {'team': 'SRZ2'},
+    })
+
+    create_engine(url)
+
+    alembic.command.upgrade(Config('alembic.ini'), 'head')
 
 
 class AsyncTestCase(unittest.TestCase):
@@ -13,3 +49,17 @@ class AsyncTestCase(unittest.TestCase):
         super().setUp()
 
         self.loop = asyncio.get_event_loop()
+
+
+class DatabaseTestCase(AsyncTestCase):
+    database: databases.Database
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        ensure_database_configured()
+
+        # Import must happen after TESTING environment setup
+        from code_submitter.server import database
+
+        cls.database = database

@@ -1,47 +1,19 @@
 import io
-import json
 import zipfile
 import datetime
-import tempfile
-from typing import IO
 from unittest import mock
 
-import alembic  # type: ignore[import]
 import test_utils
-from sqlalchemy import create_engine
-from alembic.config import Config  # type: ignore[import]
-from starlette.config import environ
 from starlette.testclient import TestClient
 from code_submitter.tables import Archive, ChoiceHistory
 
-DATABASE_FILE: IO[bytes]
 
-
-def setUpModule() -> None:
-    global DATABASE_FILE
-
-    DATABASE_FILE = tempfile.NamedTemporaryFile(suffix='sqlite.db')
-    url = 'sqlite:///{}'.format(DATABASE_FILE.name)
-
-    environ['TESTING'] = 'True'
-    environ['DATABASE_URL'] = url
-
-    environ['AUTH_BACKEND'] = json.dumps({
-        'backend': 'code_submitter.auth.DummyBackend',
-        'kwargs': {'team': 'SRZ2'},
-    })
-
-    create_engine(url)
-
-    alembic.command.upgrade(Config('alembic.ini'), 'head')
-
-
-class AppTests(test_utils.AsyncTestCase):
+class AppTests(test_utils.DatabaseTestCase):
     def setUp(self) -> None:
         super().setUp()
 
         # App import must happen after TESTING environment setup
-        from code_submitter.server import app, database
+        from code_submitter.server import app
 
         def url_for(name: str) -> str:
             # While it makes for uglier tests, we do need to use more absolute
@@ -53,7 +25,6 @@ class AppTests(test_utils.AsyncTestCase):
         self.session = test_client.__enter__()
         self.session.auth = ('test_user', 'test_pass')
         self.url_for = url_for
-        self.database = database
 
     def tearDown(self) -> None:
         self.session.__exit__(None, None, None)
