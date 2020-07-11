@@ -67,8 +67,8 @@ class UtilsTests(test_utils.InTransactionTestCase):
         result = self.await_(utils.get_chosen_submissions(self.database))
         self.assertEqual(
             {
-                'SRZ2': b'1111111111',
-                'ABC': b'8888888888',
+                'SRZ2': (1111111111, b'1111111111'),
+                'ABC': (8888888888, b'8888888888'),
             },
             result,
         )

@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple
 
 import databases
 from sqlalchemy.sql import select
@@ -6,7 +6,9 @@ from sqlalchemy.sql import select
 from .tables import Archive, ChoiceHistory
 
 
-async def get_chosen_submissions(database: databases.Database) -> Dict[str, bytes]:
+async def get_chosen_submissions(
+    database: databases.Database,
+) -> Dict[str, Tuple[int, bytes]]:
     """
     Return a mapping of teams to their the chosen archive.
     """
@@ -16,6 +18,7 @@ async def get_chosen_submissions(database: databases.Database) -> Dict[str, byte
 
     rows = await database.fetch_all(
         select([
+            Archive.c.id,
             Archive.c.team,
             Archive.c.content,
             ChoiceHistory.c.created,
@@ -28,4 +31,4 @@ async def get_chosen_submissions(database: databases.Database) -> Dict[str, byte
     )
 
     # Rely on later keys replacing earlier occurrences of the same key.
-    return {x['team']: x['content'] for x in rows}
+    return {x['team']: (x['id'], x['content']) for x in rows}

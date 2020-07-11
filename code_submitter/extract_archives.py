@@ -17,8 +17,15 @@ async def async_main(submissions_directory: Path) -> None:
     async with database.transaction():
         submissions = await utils.get_chosen_submissions(database)
 
-        for team, content in submissions.items():
+        for team, (_, content) in submissions.items():
             (submissions_directory / f'{team.upper()}.zip').write_bytes(content)
+
+        (submissions_directory / 'summary.txt').write_text(
+            "".join(
+                "{}: {}\n".format(team, id_)
+                for team, (id_, _) in submissions.items()
+            ),
+        )
 
 
 def parse_args() -> argparse.Namespace:
