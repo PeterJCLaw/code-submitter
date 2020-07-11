@@ -63,3 +63,13 @@ class DatabaseTestCase(AsyncTestCase):
         from code_submitter.server import database
 
         cls.database = database
+
+
+class InTransactionTestCase(DatabaseTestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.await_(self.database.connect())
+
+    def tearDown(self) -> None:
+        self.await_(self.database.disconnect())
+        super().tearDown()
