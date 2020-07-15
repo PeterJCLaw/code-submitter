@@ -150,6 +150,14 @@ class NemesisBackend(BasicAuthBackend):
 
         return team
 
+    def get_scopes(self, info: NemesisUserInfo) -> List[str]:
+        scopes = ['authenticated']
+
+        if info['is_blueshirt']:
+            scopes.append('blueshirt')
+
+        return scopes
+
     async def validate(self, username: str, password: str) -> ValidationResult:
         if not username:
             raise AuthenticationError("Must provide a username")
@@ -159,8 +167,9 @@ class NemesisBackend(BasicAuthBackend):
         info = await self.load_user(username, password)
 
         team = self.get_team(info)
+        scopes = self.get_scopes(info)
 
-        return ['authenticated'], User(username, team)
+        return scopes, User(username, team)
 
 
 class DummyNemesisBackend(NemesisBackend):

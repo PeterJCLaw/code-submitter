@@ -74,3 +74,21 @@ class NemesisAuthTests(test_utils.AsyncTestCase):
         self.assertEqual('user', user.username, "Wrong username for user")
 
         self.assertEqual(['authenticated'], scopes, "Wrong scopes for user")
+
+    def test_blueshirt(self) -> None:
+        @self.fake_nemesis.route('/user/user')
+        async def endpoint(request: Request) -> Response:
+            self.info['teams'] = []
+            self.info['is_blueshirt'] = True
+            return JSONResponse(self.info)
+
+        scopes, user = self.await_(self.backend.validate('user', 'pass'))
+
+        self.assertIsNone(user.team, "Wrong team for user")
+        self.assertEqual('user', user.username, "Wrong username for user")
+
+        self.assertEqual(
+            ['authenticated', 'blueshirt'],
+            scopes,
+            "Wrong scopes for user",
+        )
