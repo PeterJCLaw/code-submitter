@@ -1,4 +1,5 @@
 from typing import Dict, Tuple
+from zipfile import ZipFile
 
 import databases
 from sqlalchemy.sql import select
@@ -32,3 +33,22 @@ async def get_chosen_submissions(
 
     # Rely on later keys replacing earlier occurrences of the same key.
     return {x['team']: (x['id'], x['content']) for x in rows}
+
+
+def summarise(submissions: Dict[str, Tuple[int, bytes]]) -> str:
+    return "".join(
+        "{}: {}\n".format(team, id_)
+        for team, (id_, _) in sorted(submissions.items())
+    )
+
+
+async def collect_submissions(
+    database: databases.Database,
+    zipfile: ZipFile,
+) -> None:
+    submissions = await get_chosen_submissions(database)
+
+    for team, (_, content) in submissions.items():
+        zipfile.writestr(f'{team.upper()}.zip', content)
+
+    zipfile.writestr('summary.txt', summarise(submissions))

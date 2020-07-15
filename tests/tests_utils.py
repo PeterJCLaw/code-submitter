@@ -1,3 +1,5 @@
+import io
+import zipfile
 import datetime
 
 import test_utils
@@ -72,3 +74,38 @@ class UtilsTests(test_utils.InTransactionTestCase):
             },
             result,
         )
+
+    def test_collect_submissions(self) -> None:
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=8888888888,
+                username='someone_else',
+                created=datetime.datetime(2020, 8, 8, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=1111111111,
+                username='test_user',
+                created=datetime.datetime(2020, 3, 3, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=2222222222,
+                username='test_user',
+                created=datetime.datetime(2020, 2, 2, 12, 0),
+            ),
+        ))
+
+        with zipfile.ZipFile(io.BytesIO(), mode='w') as zf:
+            self.await_(utils.collect_submissions(self.database, zf))
+
+            self.assertEqual(
+                {
+                    'summary.txt': b'ABC: 8888888888\nSRZ2: 1111111111\n',
+                    'SRZ2.zip': b'1111111111',
+                    'ABC.zip': b'8888888888',
+                },
+                {x: zf.open(x).read() for x in zf.namelist()},
+            )
