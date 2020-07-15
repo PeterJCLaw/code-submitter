@@ -9,6 +9,7 @@ import databases
 from sqlalchemy import create_engine
 from alembic.config import Config  # type: ignore[import]
 from starlette.config import environ
+from code_submitter.auth import NemesisUserInfo, DummyNemesisBackend
 
 T = TypeVar('T')
 
@@ -32,8 +33,19 @@ def ensure_database_configured() -> None:
     environ['DATABASE_URL'] = url
 
     environ['AUTH_BACKEND'] = json.dumps({
-        'backend': 'code_submitter.auth.DummyBackend',
-        'kwargs': {'team': 'SRZ2'},
+        'backend': 'code_submitter.auth.DummyNemesisBackend',
+        'kwargs': {'data': [
+            NemesisUserInfo({
+                'username': 'test_user',
+                'first_name': 'Test',
+                'last_name': 'User',
+                'teams': ['team-SRZ2'],
+                'is_blueshirt': False,
+                'is_student': False,
+                'is_team_leader': False,
+            }),
+            *DummyNemesisBackend.DEFAULT,
+        ]},
     })
 
     create_engine(url)

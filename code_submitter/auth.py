@@ -161,3 +161,32 @@ class NemesisBackend(BasicAuthBackend):
         team = self.get_team(info)
 
         return ['authenticated'], User(username, team)
+
+
+class DummyNemesisBackend(NemesisBackend):
+    DEFAULT = [
+        NemesisUserInfo({
+            'username': 'blueshirt',
+            'first_name': 'Blue',
+            'last_name': 'Shirt',
+            'teams': ['team-SRZ'],
+            'is_blueshirt': True,
+            'is_student': False,
+            'is_team_leader': False,
+        }),
+        NemesisUserInfo({
+            'username': 'competitor',
+            'first_name': 'Competitor',
+            'last_name': '',
+            'teams': ['team-ABC'],
+            'is_blueshirt': False,
+            'is_student': False,
+            'is_team_leader': False,
+        }),
+    ]
+
+    def __init__(self, data: List[NemesisUserInfo] = DEFAULT) -> None:
+        self.data = {x['username']: x for x in data}
+
+    async def load_user(self, username: str, password: str) -> NemesisUserInfo:
+        return self.data[username]
