@@ -275,3 +275,48 @@ class AppTests(test_utils.DatabaseTestCase):
             self.database.fetch_all(ChoiceHistory.select()),
         )
         self.assertEqual([], choices, "Should not have created a choice")
+
+    def test_download_submissions_requires_blueshirt(self) -> None:
+        response = self.session.get(self.url_for('download_submissions'))
+        self.assertEqual(403, response.status_code)
+
+    def test_download_submissions_when_none(self) -> None:
+        self.session.auth = ('blueshirt', 'blueshirt')
+
+        response = self.session.get(self.url_for('download_submissions'))
+        self.assertEqual(200, response.status_code)
+
+        with zipfile.ZipFile(io.BytesIO(response.content)) as zf:
+            self.assertCountEqual(
+                ['summary.txt'],
+                zf.namelist(),
+            )
+
+    def test_download_submissions(self) -> None:
+        self.session.auth = ('blueshirt', 'blueshirt')
+
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=8888888888,
+                content=b'',
+                username='someone_else',
+                team='ABC',
+                created=datetime.datetime(2020, 8, 8, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=8888888888,
+                username='test_user',
+                created=datetime.datetime(2020, 9, 9, 12, 0),
+            ),
+        ))
+
+        response = self.session.get(self.url_for('download_submissions'))
+        self.assertEqual(200, response.status_code)
+
+        with zipfile.ZipFile(io.BytesIO(response.content)) as zf:
+            self.assertCountEqual(
+                ['summary.txt', 'ABC.zip'],
+                zf.namelist(),
+            )

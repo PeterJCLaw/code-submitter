@@ -1,5 +1,6 @@
 import io
 import zipfile
+import datetime
 
 import databases
 from sqlalchemy.sql import select
@@ -13,7 +14,7 @@ from starlette.authentication import requires
 from starlette.datastructures import UploadFile
 from starlette.middleware.authentication import AuthenticationMiddleware
 
-from . import auth, config
+from . import auth, utils, config
 from .auth import User
 from .tables import Archive, ChoiceHistory
 
@@ -119,9 +120,28 @@ async def upload(request: Request) -> Response:
         status_code=302,
     )
 
+
+@requires(['authenticated', 'blueshirt'])
+async def download_submissions(request: Request) -> Response:
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, mode='w') as zf:
+        await utils.collect_submissions(database, zf)
+
+    filename = 'submissions-{now}.zip'.format(
+        now=datetime.datetime.now(datetime.timezone.utc),
+    )
+
+    return Response(
+        buffer.getvalue(),
+        headers={'Content-Disposition': f'attachment; filename="{filename}"'},
+        media_type='application/zip',
+    )
+
+
 routes = [
     Route('/', endpoint=homepage, methods=['GET']),
     Route('/upload', endpoint=upload, methods=['POST']),
+    Route('/download-submissions', endpoint=download_submissions, methods=['GET']),
 ]
 
 middleware = [
