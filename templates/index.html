@@ -31,6 +31,15 @@
   <body>
     <div class="container">
       <h1>Virtual Competition Code Submission</h1>
+      {% if 'blueshirt' in request.auth.scopes %}
+      <div class="row">
+        <div class="col-sm-6">
+          <a href="{{ url_for('download_submissions') }}">
+            Download current chosen submissions
+          </a>
+        </div>
+      </div>
+      {% endif %}
       <div class="row">
         {% if request.user.team %}
         <form

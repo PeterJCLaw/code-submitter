@@ -276,6 +276,23 @@ class AppTests(test_utils.DatabaseTestCase):
         )
         self.assertEqual([], choices, "Should not have created a choice")
 
+    def test_no_download_link_for_non_blueshirt(self) -> None:
+        download_url = self.url_for('download_submissions')
+
+        response = self.session.get(self.url_for('homepage'))
+
+        html = response.text
+        self.assertNotIn(download_url, html)
+
+    def test_shows_download_link_for_blueshirt(self) -> None:
+        self.session.auth = ('blueshirt', 'blueshirt')
+
+        download_url = self.url_for('download_submissions')
+
+        response = self.session.get(self.url_for('homepage'))
+        html = response.text
+        self.assertIn(download_url, html)
+
     def test_download_submissions_requires_blueshirt(self) -> None:
         response = self.session.get(self.url_for('download_submissions'))
         self.assertEqual(403, response.status_code)
