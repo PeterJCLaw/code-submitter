@@ -101,7 +101,7 @@ class NemesisBackend(BasicAuthBackend):
         # Munge types to cope with httpx not supporting strict_optional but
         # actually being fine with given `None`. Note we expect only to pass
         # this value in tests, so need to cope with it being `None` most of the
-        # time anyway.
+        # time anyway. See https://github.com/python/mypy/issues/9208.
         app = cast(Starlette, _target)
         self.client = httpx.AsyncClient(base_url=url, app=app, verify=verify)
 
