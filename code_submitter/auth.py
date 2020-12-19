@@ -222,7 +222,7 @@ class FileBackend(BasicAuthBackend):
     """
 
     UNKNOWN_USER_MESSAGE = "Username or password is incorrect"
-    BLUESHIRT_TEAM = "SRX"
+    BLUESHIRT_TEAM = 'SRX'
 
     def __init__(self, *, path: Union[str, Path]) -> None:
         with open(path) as f:
@@ -248,5 +248,5 @@ class FileBackend(BasicAuthBackend):
         scopes = self.get_scopes(username)
 
         if BLUESHIRT_SCOPE in scopes:
-            return scopes, User("SR", None)
-        return scopes, User(f"Team {username}", username)
+            return scopes, User('SR', None)
+        return scopes, User(f'Team {username}', username)
