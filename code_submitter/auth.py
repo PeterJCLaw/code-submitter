@@ -208,6 +208,8 @@ class FileBackend(BasicAuthBackend):
     Authentication backend which stores credentials in a YAML file.
 
     Credentials are stored in the format `TLA: password`.
+
+    Note: Passwords are stored in plaintext.
     """
 
     UNKNOWN_USER_MESSAGE = "Username or password is incorrect"
