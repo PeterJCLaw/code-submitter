@@ -5,4 +5,4 @@ databases[sqlite]
 sqlalchemy
 alembic
 httpx
-ruamel.yaml
+pyyaml

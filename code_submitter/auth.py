@@ -5,8 +5,8 @@ import binascii
 from typing import cast, Dict, List, Tuple, Optional, Sequence
 from typing_extensions import TypedDict
 
+import yaml
 import httpx
-from ruamel.yaml import YAML
 from starlette.requests import HTTPConnection
 from starlette.responses import Response
 from starlette.applications import Starlette
@@ -223,7 +223,7 @@ class FileBackend(BasicAuthBackend):
         path: str,
     ) -> None:
         with open(path) as f:
-            self.credentials = cast(Dict[str, str], YAML(typ="safe").load(f))
+            self.credentials = cast(Dict[str, str], yaml.safe_load(f))
 
     def get_scopes(self, username: str) -> List[str]:
         scopes = ['authenticated']
