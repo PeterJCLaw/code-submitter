@@ -133,7 +133,7 @@ class FileAuthTests(test_utils.AsyncTestCase):
         scopes, user = self.await_(self.backend.validate('SRX', 'bees'))
 
         self.assertIsNone(user.team, "Wrong team for user")
-        self.assertEqual('SR', user.username, "Wrong username for user")
+        self.assertEqual('Blueshirt', user.username, "Wrong username for user")
 
         self.assertEqual(
             ['authenticated', BLUESHIRT_SCOPE],
