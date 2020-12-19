@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import test_utils
 from starlette.requests import Request
@@ -106,9 +106,9 @@ class FileAuthTests(test_utils.AsyncTestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        my_dir = os.path.abspath(os.path.dirname(__file__))
+        self.auth_fixture = Path(__file__).parent / "fixtures/auth-file.yml"
 
-        self.backend = FileBackend(path=os.path.join(my_dir, "fixtures", "auth-file.yml"))
+        self.backend = FileBackend(path=str(self.auth_fixture))
 
     def test_ok(self) -> None:
         scopes, user = self.await_(self.backend.validate('ABC', 'password1'))
