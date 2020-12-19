@@ -106,7 +106,7 @@ class FileAuthTests(test_utils.AsyncTestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        self.auth_fixture = Path(__file__).parent / "fixtures/auth-file.yml"
+        self.auth_fixture = Path(__file__).parent / 'fixtures' / 'auth-file.yml'
 
         self.backend = FileBackend(path=str(self.auth_fixture))
 
