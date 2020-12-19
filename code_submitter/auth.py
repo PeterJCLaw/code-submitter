@@ -1,11 +1,11 @@
-from typing_extensions import TypedDict
-
-import httpx
 import base64
 import logging
 import secrets
 import binascii
 from typing import cast, Dict, List, Tuple, Optional, Sequence
+from typing_extensions import TypedDict
+
+import httpx
 from ruamel.yaml import YAML
 from starlette.requests import HTTPConnection
 from starlette.responses import Response
@@ -109,22 +109,22 @@ class NemesisBackend(BasicAuthBackend):
 
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
         async with self.client as client:
-            respone = await client.get(
+            response = await client.get(
                 'user/{}'.format(username),
                 auth=(username, password),
             )
 
             try:
-                respone.raise_for_status()
+                response.raise_for_status()
             except httpx.HTTPError as e:
-                if e.response.status_code != 403:
+                if response.status_code != 403:
                     logger.exception(
                         "Failed to contact nemesis while trying to authenticate %r",
                         username,
                     )
                 raise AuthenticationError(e) from e
 
-            return cast(NemesisUserInfo, respone.json())
+            return cast(NemesisUserInfo, response.json())
 
     def strip_team(self, team: str) -> str:
         # All teams from nemesis *should* start with this prefix...
