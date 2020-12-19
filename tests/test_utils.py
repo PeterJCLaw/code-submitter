@@ -9,6 +9,7 @@ import databases
 from sqlalchemy import create_engine
 from alembic.config import Config  # type: ignore[import]
 from starlette.config import environ
+
 from code_submitter.auth import NemesisUserInfo, DummyNemesisBackend
 
 T = TypeVar('T')

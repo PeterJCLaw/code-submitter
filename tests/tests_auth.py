@@ -1,9 +1,10 @@
 import test_utils
 from starlette.requests import Request
-from code_submitter.auth import NemesisBackend, NemesisUserInfo
 from starlette.responses import Response, JSONResponse
 from starlette.applications import Starlette
 from starlette.authentication import AuthenticationError
+
+from code_submitter.auth import NemesisBackend, NemesisUserInfo
 
 
 class NemesisAuthTests(test_utils.AsyncTestCase):
