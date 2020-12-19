@@ -2,7 +2,8 @@ import base64
 import logging
 import secrets
 import binascii
-from typing import cast, Dict, List, Tuple, Optional, Sequence
+from typing import cast, Dict, List, Tuple, Union, Optional, Sequence
+from pathlib import Path
 from typing_extensions import TypedDict
 
 import yaml
@@ -217,11 +218,7 @@ class FileBackend(BasicAuthBackend):
     UNKNOWN_USER_MESSAGE = "Username or password is incorrect"
     BLUESHIRT_TEAM = "SRX"
 
-    def __init__(
-        self,
-        *,
-        path: str,
-    ) -> None:
+    def __init__(self, *, path: Union[str, Path]) -> None:
         with open(path) as f:
             self.credentials = cast(Dict[str, str], yaml.safe_load(f))
 
