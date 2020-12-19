@@ -29,3 +29,7 @@ Run the server:
 ``` shell
 $ ./script/uvicorn
 ```
+
+## Coding style
+
+This repo generally follows [Thread's Python coding style](https://www.notion.so/Python-Style-Guide-093dc870df7e491caa5e4a2e8c0be52f).
