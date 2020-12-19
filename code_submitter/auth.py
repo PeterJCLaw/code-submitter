@@ -248,5 +248,5 @@ class FileBackend(BasicAuthBackend):
         scopes = self.get_scopes(username)
 
         if BLUESHIRT_SCOPE in scopes:
-            return scopes, User('SR', None)
+            return scopes, User('Blueshirt', None)
         return scopes, User(f'Team {username}', username)
