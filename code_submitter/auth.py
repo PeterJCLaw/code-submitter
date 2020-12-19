@@ -1,10 +1,12 @@
-import base64
-import logging
-import binascii
-from typing import cast, List, Tuple, Optional, Sequence
 from typing_extensions import TypedDict
 
 import httpx
+import base64
+import logging
+import secrets
+import binascii
+from typing import cast, Dict, List, Tuple, Optional, Sequence
+from ruamel.yaml import YAML
 from starlette.requests import HTTPConnection
 from starlette.responses import Response
 from starlette.applications import Starlette
@@ -199,3 +201,45 @@ class DummyNemesisBackend(NemesisBackend):
 
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
         return self.data[username]
+
+
+class FileBackend(BasicAuthBackend):
+    """
+    Authentication backend which stores credentials in a YAML file.
+
+    Credentials are stored in the format `TLA: password`.
+    """
+
+    UNKNOWN_USER_MESSAGE = "Username or password is incorrect"
+    BLUESHIRT_TEAM = "SRX"
+
+    def __init__(
+        self,
+        *,
+        path: str,
+    ) -> None:
+        with open(path) as f:
+            self.credentials = cast(Dict[str, str], YAML(typ="safe").load(f))
+
+    def get_scopes(self, username: str) -> List[str]:
+        scopes = ['authenticated']
+
+        if username == self.BLUESHIRT_TEAM:
+            scopes.append('blueshirt')
+
+        return scopes
+
+    async def validate(self, username: str, password: str) -> ValidationResult:
+        known_password = self.credentials.get(username)
+
+        if known_password is None:
+            raise AuthenticationError(self.UNKNOWN_USER_MESSAGE)
+
+        if not secrets.compare_digest(password.encode(), known_password.encode()):
+            raise AuthenticationError(self.UNKNOWN_USER_MESSAGE)
+
+        scopes = self.get_scopes(username)
+
+        if 'blueshirt' in scopes:
+            return scopes, User("SR", None)
+        return scopes, User(f"Team {username}", username)
