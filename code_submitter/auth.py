@@ -19,6 +19,8 @@ from starlette.authentication import (
 
 logger = logging.getLogger(__name__)
 
+BLUESHIRT_SCOPE = 'blueshirt'
+
 
 class User(SimpleUser):
     def __init__(self, username: str, team: Optional[str]) -> None:
@@ -156,7 +158,7 @@ class NemesisBackend(BasicAuthBackend):
         scopes = ['authenticated']
 
         if info['is_blueshirt']:
-            scopes.append('blueshirt')
+            scopes.append(BLUESHIRT_SCOPE)
 
         return scopes
 
@@ -227,7 +229,7 @@ class FileBackend(BasicAuthBackend):
         scopes = ['authenticated']
 
         if username == self.BLUESHIRT_TEAM:
-            scopes.append('blueshirt')
+            scopes.append(BLUESHIRT_SCOPE)
 
         return scopes
 
@@ -242,6 +244,6 @@ class FileBackend(BasicAuthBackend):
 
         scopes = self.get_scopes(username)
 
-        if 'blueshirt' in scopes:
+        if BLUESHIRT_SCOPE in scopes:
             return scopes, User("SR", None)
         return scopes, User(f"Team {username}", username)

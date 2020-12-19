@@ -6,7 +6,12 @@ from starlette.responses import Response, JSONResponse
 from starlette.applications import Starlette
 from starlette.authentication import AuthenticationError
 
-from code_submitter.auth import FileBackend, NemesisBackend, NemesisUserInfo
+from code_submitter.auth import (
+    FileBackend,
+    NemesisBackend,
+    BLUESHIRT_SCOPE,
+    NemesisUserInfo,
+)
 
 
 class NemesisAuthTests(test_utils.AsyncTestCase):
@@ -91,7 +96,7 @@ class NemesisAuthTests(test_utils.AsyncTestCase):
         self.assertEqual('user', user.username, "Wrong username for user")
 
         self.assertEqual(
-            ['authenticated', 'blueshirt'],
+            ['authenticated', BLUESHIRT_SCOPE],
             scopes,
             "Wrong scopes for user",
         )
@@ -131,7 +136,7 @@ class FileAuthTests(test_utils.AsyncTestCase):
         self.assertEqual('SR', user.username, "Wrong username for user")
 
         self.assertEqual(
-            ['authenticated', 'blueshirt'],
+            ['authenticated', BLUESHIRT_SCOPE],
             scopes,
             "Wrong scopes for user",
         )
