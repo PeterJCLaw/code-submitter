@@ -31,7 +31,7 @@
   <body>
     <div class="container">
       <h1>Virtual Competition Code Submission</h1>
-      {% if 'blueshirt' in request.auth.scopes %}
+      {% if BLUESHIRT_SCOPE in request.auth.scopes %}
       <div class="row">
         <div class="col-sm-6">
           <a href="{{ url_for('download_submissions') }}">

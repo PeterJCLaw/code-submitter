@@ -5,3 +5,4 @@ databases[sqlite]
 sqlalchemy
 alembic
 httpx
+pyyaml

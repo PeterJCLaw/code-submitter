@@ -1,9 +1,12 @@
 import base64
 import logging
+import secrets
 import binascii
-from typing import cast, List, Tuple, Optional, Sequence
+from typing import cast, Dict, List, Tuple, Union, Optional, Sequence
+from pathlib import Path
 from typing_extensions import TypedDict
 
+import yaml
 import httpx
 from starlette.requests import HTTPConnection
 from starlette.responses import Response
@@ -16,6 +19,8 @@ from starlette.authentication import (
 )
 
 logger = logging.getLogger(__name__)
+
+BLUESHIRT_SCOPE = 'blueshirt'
 
 
 class User(SimpleUser):
@@ -154,7 +159,7 @@ class NemesisBackend(BasicAuthBackend):
         scopes = ['authenticated']
 
         if info['is_blueshirt']:
-            scopes.append('blueshirt')
+            scopes.append(BLUESHIRT_SCOPE)
 
         return scopes
 
@@ -199,3 +204,49 @@ class DummyNemesisBackend(NemesisBackend):
 
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
         return self.data[username]
+
+
+class FileBackend(BasicAuthBackend):
+    """
+    Authentication backend which stores credentials in a YAML file.
+
+    Credentials are stored in the format `TLA: password`.
+
+    Note: Passwords are stored in plaintext.
+    This is acceptable for some use-cases, for example where the
+    data being uploaded is not sensitive or because someone having
+    access to the credentials file almost certainly implies they have
+    access to the upload storage anyway. However this may not be
+    the case for all use-cases and you should evaluate the risks
+    yourself before using this backend. You have been warned!
+    """
+
+    UNKNOWN_USER_MESSAGE = "Username or password is incorrect"
+    BLUESHIRT_TEAM = "SRX"
+
+    def __init__(self, *, path: Union[str, Path]) -> None:
+        with open(path) as f:
+            self.credentials = cast(Dict[str, str], yaml.safe_load(f))
+
+    def get_scopes(self, username: str) -> List[str]:
+        scopes = ['authenticated']
+
+        if username == self.BLUESHIRT_TEAM:
+            scopes.append(BLUESHIRT_SCOPE)
+
+        return scopes
+
+    async def validate(self, username: str, password: str) -> ValidationResult:
+        known_password = self.credentials.get(username)
+
+        if known_password is None:
+            raise AuthenticationError(self.UNKNOWN_USER_MESSAGE)
+
+        if not secrets.compare_digest(password.encode(), known_password.encode()):
+            raise AuthenticationError(self.UNKNOWN_USER_MESSAGE)
+
+        scopes = self.get_scopes(username)
+
+        if BLUESHIRT_SCOPE in scopes:
+            return scopes, User("SR", None)
+        return scopes, User(f"Team {username}", username)

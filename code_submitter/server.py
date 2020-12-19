@@ -15,7 +15,7 @@ from starlette.datastructures import UploadFile
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from . import auth, utils, config
-from .auth import User
+from .auth import User, BLUESHIRT_SCOPE
 from .tables import Archive, ChoiceHistory
 
 database = databases.Database(config.DATABASE_URL, force_rollback=config.TESTING)
@@ -53,6 +53,7 @@ async def homepage(request: Request) -> Response:
         'request': request,
         'chosen': chosen,
         'uploads': uploads,
+        'BLUESHIRT_SCOPE': BLUESHIRT_SCOPE,
     })
 
 
@@ -121,7 +122,7 @@ async def upload(request: Request) -> Response:
     )
 
 
-@requires(['authenticated', 'blueshirt'])
+@requires(['authenticated', BLUESHIRT_SCOPE])
 async def download_submissions(request: Request) -> Response:
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, mode='w') as zf:
