@@ -107,13 +107,13 @@ class NemesisBackend(BasicAuthBackend):
 
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
         async with self.client as client:
-            respone = await client.get(
+            response = await client.get(
                 'user/{}'.format(username),
                 auth=(username, password),
             )
 
             try:
-                respone.raise_for_status()
+                response.raise_for_status()
             except httpx.HTTPError as e:
                 if e.response.status_code != 403:
                     logger.exception(
@@ -122,7 +122,7 @@ class NemesisBackend(BasicAuthBackend):
                     )
                 raise AuthenticationError(e) from e
 
-            return cast(NemesisUserInfo, respone.json())
+            return cast(NemesisUserInfo, response.json())
 
     def strip_team(self, team: str) -> str:
         # All teams from nemesis *should* start with this prefix...
