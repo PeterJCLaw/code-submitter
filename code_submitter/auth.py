@@ -213,6 +213,12 @@ class FileBackend(BasicAuthBackend):
     Credentials are stored in the format `TLA: password`.
 
     Note: Passwords are stored in plaintext.
+    This is acceptable for some use-cases, for example where the
+    data being uploaded is not sensitive or because someone having
+    access to the credentials file almost certainly implies they have
+    access to the upload storage anyway. However this may not be
+    the case for all use-cases and you should evaluate the risks
+    yourself before using this backend. You have been warned!
     """
 
     UNKNOWN_USER_MESSAGE = "Username or password is incorrect"
