@@ -287,7 +287,7 @@ class AppTests(test_utils.DatabaseTestCase):
         self.assertNotIn(download_url, html)
 
     def test_shows_download_link_for_blueshirt(self) -> None:
-        self.session.auth = (BLUESHIRT_SCOPE, BLUESHIRT_SCOPE)
+        self.session.auth = ('blueshirt', 'blueshirt')
 
         download_url = self.url_for('download_submissions')
 
@@ -300,7 +300,7 @@ class AppTests(test_utils.DatabaseTestCase):
         self.assertEqual(403, response.status_code)
 
     def test_download_submissions_when_none(self) -> None:
-        self.session.auth = (BLUESHIRT_SCOPE, BLUESHIRT_SCOPE)
+        self.session.auth = ('blueshirt', 'blueshirt')
 
         response = self.session.get(self.url_for('download_submissions'))
         self.assertEqual(200, response.status_code)
@@ -312,7 +312,7 @@ class AppTests(test_utils.DatabaseTestCase):
             )
 
     def test_download_submissions(self) -> None:
-        self.session.auth = (BLUESHIRT_SCOPE, BLUESHIRT_SCOPE)
+        self.session.auth = ('blueshirt', 'blueshirt')
 
         self.await_(self.database.execute(
             Archive.insert().values(
