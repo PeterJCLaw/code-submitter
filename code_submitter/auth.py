@@ -115,7 +115,7 @@ class NemesisBackend(BasicAuthBackend):
             try:
                 response.raise_for_status()
             except httpx.HTTPError as e:
-                if e.response.status_code != 403:
+                if response.status_code != 403:
                     logger.exception(
                         "Failed to contact nemesis while trying to authenticate %r",
                         username,
