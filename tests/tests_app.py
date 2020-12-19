@@ -6,7 +6,6 @@ from unittest import mock
 import test_utils
 from starlette.testclient import TestClient
 
-from code_submitter.auth import BLUESHIRT_SCOPE
 from code_submitter.tables import Archive, ChoiceHistory
 
 
