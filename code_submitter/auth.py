@@ -203,7 +203,10 @@ class DummyNemesisBackend(NemesisBackend):
         self.data = {x['username']: x for x in data}
 
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
-        return self.data[username]
+        try:
+            return self.data[username]
+        except KeyError:
+            raise AuthenticationError(f"Unknown user {username}") from None
 
 
 class FileBackend(BasicAuthBackend):
