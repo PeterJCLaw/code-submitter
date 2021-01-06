@@ -130,7 +130,7 @@ class FileAuthTests(test_utils.AsyncTestCase):
         self.assertEqual(e.exception.args[0], FileBackend.UNKNOWN_USER_MESSAGE)
 
     def test_blueshirt(self) -> None:
-        scopes, user = self.await_(self.backend.validate('SRX', 'bees'))
+        scopes, user = self.await_(self.backend.validate('SRZ', 'bees'))
 
         self.assertIsNone(user.team, "Wrong team for user")
         self.assertEqual('Blueshirt', user.username, "Wrong username for user")
