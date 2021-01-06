@@ -34,7 +34,7 @@
       {% if BLUESHIRT_SCOPE in request.auth.scopes %}
       <div class="row">
         <div class="col-sm-6">
-          <a href="{{ url_for('download_submissions') }}">
+          <a download href="{{ url_for('download_submissions') }}">
             Download current chosen submissions
           </a>
         </div>
