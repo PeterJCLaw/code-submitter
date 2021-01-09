@@ -3,7 +3,7 @@ import zipfile
 import datetime
 
 import databases
-from sqlalchemy.sql import select
+from sqlalchemy.sql import and_, select
 from starlette.routing import Route
 from starlette.requests import Request
 from starlette.responses import Response, RedirectResponse
@@ -122,6 +122,41 @@ async def upload(request: Request) -> Response:
     )
 
 
+@requires('authenticated')
+async def archive(request: Request) -> Response:
+    user: User = request.user
+    if not user.team:
+        return Response(
+            "Must be a member of a team to be able to download individual archives",
+            status_code=403,
+        )
+
+    archive_id = request.path_params['archive_id']
+
+    archive = await database.fetch_one(
+        select([
+            Archive.c.content,
+        ]).where(and_(
+            Archive.c.id == archive_id,
+            Archive.c.team == request.user.team,
+        )),
+    )
+
+    if archive is None:
+        return Response(
+            f"{archive_id!r} is not a valid archive id",
+            status_code=404,
+        )
+
+    filename = f'upload-{archive_id}.zip'
+
+    return Response(
+        archive['content'],
+        headers={'Content-Disposition': f'attachment; filename="{filename}"'},
+        media_type='application/zip',
+    )
+
+
 @requires(['authenticated', BLUESHIRT_SCOPE])
 async def download_submissions(request: Request) -> Response:
     buffer = io.BytesIO()
@@ -142,6 +177,7 @@ async def download_submissions(request: Request) -> Response:
 routes = [
     Route('/', endpoint=homepage, methods=['GET']),
     Route('/upload', endpoint=upload, methods=['POST']),
+    Route('/archive/{archive_id:int}', endpoint=archive, methods=['GET']),
     Route('/download-submissions', endpoint=download_submissions, methods=['GET']),
 ]
 

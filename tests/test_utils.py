@@ -45,6 +45,15 @@ def ensure_database_configured() -> None:
                 'is_student': False,
                 'is_team_leader': False,
             }),
+            NemesisUserInfo({
+                'username': 'no_teams_blueshirt',
+                'first_name': 'No Teams',
+                'last_name': 'Blueshirt',
+                'teams': [],
+                'is_blueshirt': True,
+                'is_student': False,
+                'is_team_leader': False,
+            }),
             *DummyNemesisBackend.DEFAULT,
         ]},
     })

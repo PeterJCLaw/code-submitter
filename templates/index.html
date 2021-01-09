@@ -90,6 +90,7 @@
               <th scope="col">Id</th>
               <th scope="col">Uploaded</th>
               <th scope="col">By</th>
+              <th scope="col">Download</th>
               <th scope="col">Selected</th>
             </tr>
             {% for upload in uploads %}
@@ -99,6 +100,14 @@
               <td>{{ upload.id }}</td>
               <td>{{ upload.created }}</td>
               <td>{{ upload.username }}</td>
+              <td>
+                <a
+                  download
+                  href="{{ url_for('archive', archive_id=upload.id) }}"
+                >
+                  ▼
+                </a>
+              </td>
               <td>
                 {% if upload.id == chosen.archive_id %}
                 <span>★</span>
