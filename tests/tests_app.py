@@ -4,9 +4,10 @@ import datetime
 from unittest import mock
 
 import test_utils
+from sqlalchemy.sql import select
 from starlette.testclient import TestClient
 
-from code_submitter.tables import Archive, ChoiceHistory
+from code_submitter.tables import Archive, Session, ChoiceHistory
 
 
 class AppTests(test_utils.DatabaseTestCase):
@@ -276,6 +277,42 @@ class AppTests(test_utils.DatabaseTestCase):
             self.database.fetch_all(ChoiceHistory.select()),
         )
         self.assertEqual([], choices, "Should not have created a choice")
+
+    def test_create_session_requires_blueshirt(self) -> None:
+        response = self.session.post(
+            self.url_for('create_session'),
+            data={'name': "Test session"},
+        )
+        self.assertEqual(403, response.status_code)
+
+    def test_create_session(self) -> None:
+        self.session.auth = ('blueshirt', 'blueshirt')
+
+        response = self.session.post(
+            self.url_for('create_session'),
+            data={'name': "Test session"},
+        )
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(
+            self.url_for('homepage'),
+            response.headers['location'],
+        )
+
+        session, = self.await_(
+            self.database.fetch_all(select([
+                Session.c.name,
+                Session.c.username,
+            ])),
+        )
+
+        self.assertEqual(
+            {
+                'name': 'Test session',
+                'username': 'blueshirt',
+            },
+            dict(session),
+            "Should have created a session",
+        )
 
     def test_no_download_link_for_non_blueshirt(self) -> None:
         download_url = self.url_for('download_submissions')

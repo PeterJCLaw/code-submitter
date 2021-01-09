@@ -39,6 +39,22 @@
           </a>
         </div>
       </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <form
+            action="{{ url_for('create_session') }}"
+            enctype="multipart/form-data"
+            method="POST"
+          >
+            <h4>Create a new session</h4>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="name">Name</label>
+              <input class="col-sm-6" type="text" name="name" required />
+            </div>
+            <button class="btn btn-primary" type="submit">Create</button>
+          </form>
+        </div>
+      </div>
       {% endif %}
       <div class="row">
         {% if request.user.team %}

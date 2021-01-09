@@ -123,6 +123,20 @@ async def upload(request: Request) -> Response:
 
 
 @requires(['authenticated', BLUESHIRT_SCOPE])
+async def create_session(request: Request) -> Response:
+    user: User = request.user
+    form = await request.form()
+
+    await utils.create_session(database, form['name'], by_username=user.username)
+
+    return RedirectResponse(
+        request.url_for('homepage'),
+        # 302 so that the browser switches to GET
+        status_code=302,
+    )
+
+
+@requires(['authenticated', BLUESHIRT_SCOPE])
 async def download_submissions(request: Request) -> Response:
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, mode='w') as zf:
@@ -142,6 +156,7 @@ async def download_submissions(request: Request) -> Response:
 routes = [
     Route('/', endpoint=homepage, methods=['GET']),
     Route('/upload', endpoint=upload, methods=['POST']),
+    Route('/create-session', endpoint=create_session, methods=['POST']),
     Route('/download-submissions', endpoint=download_submissions, methods=['GET']),
 ]
 
