@@ -1,5 +1,6 @@
 import io
 import zipfile
+import itertools
 from typing import cast
 
 import databases
@@ -16,7 +17,7 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 
 from . import auth, utils, config
 from .auth import User, BLUESHIRT_SCOPE
-from .tables import Archive, Session, ChoiceHistory
+from .tables import Archive, Session, ChoiceHistory, ChoiceForSession
 
 database = databases.Database(config.DATABASE_URL, force_rollback=config.TESTING)
 templates = Jinja2Templates(directory='templates')
@@ -52,11 +53,31 @@ async def homepage(request: Request) -> Response:
     sessions = await database.fetch_all(
         Session.select().order_by(Session.c.created.desc()),
     )
+    sessions_and_archives = await database.fetch_all(
+        select([
+            Archive.c.id,
+            Session.c.name,
+        ]).select_from(
+            Archive.join(ChoiceHistory).join(ChoiceForSession).join(Session),
+        ).where(
+            Archive.c.id.in_(x['id'] for x in uploads),
+        ).order_by(
+            Archive.c.id,
+        ),
+    )
+    sessions_by_upload = {
+        grouper: [x['name'] for x in items]
+        for grouper, items in itertools.groupby(
+            sessions_and_archives,
+            key=lambda y: cast(int, y['id']),
+        )
+    }
     return templates.TemplateResponse('index.html', {
         'request': request,
         'chosen': chosen,
         'uploads': uploads,
         'sessions': sessions,
+        'sessions_by_upload': sessions_by_upload,
         'BLUESHIRT_SCOPE': BLUESHIRT_SCOPE,
     })
 

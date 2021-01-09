@@ -125,7 +125,7 @@
         {% endif %}
       </div>
       <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-9">
           <h3>Your team's uploads</h3>
           <table class="table table-striped">
             <tr>
@@ -133,6 +133,7 @@
               <th scope="col">Uploaded</th>
               <th scope="col">By</th>
               <th scope="col">Selected</th>
+              <th scope="col">Sessions</th>
             </tr>
             {% for upload in uploads %}
             <tr
@@ -149,6 +150,7 @@
                 </span>
                 {% endif %}
               </td>
+              <td>{{ ', '.join(sessions_by_upload.get(upload.id, ())) }}</td>
             </tr>
             {% endfor %}
           </table>
