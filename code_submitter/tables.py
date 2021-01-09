@@ -2,6 +2,8 @@ import sqlalchemy
 
 metadata = sqlalchemy.MetaData()
 
+# As a team member you upload your archives prior to their being used to
+# simulate matches.
 Archive = sqlalchemy.Table(
     'archive',
     metadata,
@@ -19,6 +21,8 @@ Archive = sqlalchemy.Table(
     ),
 )
 
+# As a team member you choose which of your uploaded archives is the one which
+# should be used for simulating matches.
 ChoiceHistory = sqlalchemy.Table(
     'choice_history',
     metadata,
