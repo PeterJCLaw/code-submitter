@@ -47,7 +47,7 @@ Session = sqlalchemy.Table(
     'session',
     metadata,
     sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column('description', sqlalchemy.String, nullable=False),
+    sqlalchemy.Column('name', sqlalchemy.String, unique=True, nullable=False),
 
     sqlalchemy.Column('username', sqlalchemy.String, nullable=False),
 
