@@ -59,6 +59,7 @@ Session = sqlalchemy.Table(
     ),
 )
 
+# TODO: constrain such that each team can only have one choice per session?
 ChoiceForSession = sqlalchemy.Table(
     'choice_for_session',
     metadata,
