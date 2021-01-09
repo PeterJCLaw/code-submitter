@@ -1,6 +1,6 @@
 import io
 import zipfile
-import datetime
+from typing import cast
 
 import databases
 from sqlalchemy.sql import select
@@ -16,7 +16,7 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 
 from . import auth, utils, config
 from .auth import User, BLUESHIRT_SCOPE
-from .tables import Archive, ChoiceHistory
+from .tables import Archive, Session, ChoiceHistory
 
 database = databases.Database(config.DATABASE_URL, force_rollback=config.TESTING)
 templates = Jinja2Templates(directory='templates')
@@ -49,10 +49,14 @@ async def homepage(request: Request) -> Response:
             Archive.c.created.desc(),
         ),
     )
+    sessions = await database.fetch_all(
+        Session.select().order_by(Session.c.created.desc()),
+    )
     return templates.TemplateResponse('index.html', {
         'request': request,
         'chosen': chosen,
         'uploads': uploads,
+        'sessions': sessions,
         'BLUESHIRT_SCOPE': BLUESHIRT_SCOPE,
     })
 
@@ -137,14 +141,25 @@ async def create_session(request: Request) -> Response:
 
 
 @requires(['authenticated', BLUESHIRT_SCOPE])
+@database.transaction()
 async def download_submissions(request: Request) -> Response:
+    session_id = cast(int, request.path_params['session_id'])
+
+    session = await database.fetch_one(
+        Session.select().where(Session.c.id == session_id),
+    )
+
+    if session is None:
+        return Response(
+            f"{session_id!r} is not a valid session id",
+            status_code=404,
+        )
+
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, mode='w') as zf:
-        await utils.collect_submissions(database, zf)
+        await utils.collect_submissions(database, zf, session_id)
 
-    filename = 'submissions-{now}.zip'.format(
-        now=datetime.datetime.now(datetime.timezone.utc),
-    )
+    filename = f"submissions-{session['name']}.zip"
 
     return Response(
         buffer.getvalue(),
@@ -157,7 +172,11 @@ routes = [
     Route('/', endpoint=homepage, methods=['GET']),
     Route('/upload', endpoint=upload, methods=['POST']),
     Route('/create-session', endpoint=create_session, methods=['POST']),
-    Route('/download-submissions', endpoint=download_submissions, methods=['GET']),
+    Route(
+        '/download-submissions/{session_id:int}',
+        endpoint=download_submissions,
+        methods=['GET'],
+    ),
 ]
 
 middleware = [

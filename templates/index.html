@@ -31,14 +31,40 @@
   <body>
     <div class="container">
       <h1>Virtual Competition Code Submission</h1>
-      {% if BLUESHIRT_SCOPE in request.auth.scopes %}
       <div class="row">
         <div class="col-sm-6">
-          <a download href="{{ url_for('download_submissions') }}">
-            Download current chosen submissions
-          </a>
+          <h3>Sessions</h3>
+          <table class="table table-striped">
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Created</th>
+              <th scope="col">By</th>
+              {% if BLUESHIRT_SCOPE in request.auth.scopes %}
+              <th scope="col">Download</th>
+              {% endif %}
+            </tr>
+            {% for session in sessions %}
+            <tr>
+              <td>{{ session.name }}</td>
+              <td>{{ session.created }}</td>
+              <td>{{ session.username }}</td>
+              <!-- TODO: teams in the session -->
+              {% if BLUESHIRT_SCOPE in request.auth.scopes %}
+              <td>
+                <a
+                  download
+                  href="{{ url_for('download_submissions', session_id=session.id) }}"
+                >
+                  ▼
+                </a>
+              </td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </table>
         </div>
       </div>
+      {% if BLUESHIRT_SCOPE in request.auth.scopes %}
       <div class="row">
         <div class="col-sm-6">
           <form
