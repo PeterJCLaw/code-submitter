@@ -1,10 +1,10 @@
-from typing import Dict, Tuple
+from typing import cast, Dict, Tuple
 from zipfile import ZipFile
 
 import databases
 from sqlalchemy.sql import select
 
-from .tables import Archive, ChoiceHistory
+from .tables import Archive, Session, ChoiceHistory, ChoiceForSession
 
 
 async def get_chosen_submissions(
@@ -33,6 +33,49 @@ async def get_chosen_submissions(
 
     # Rely on later keys replacing earlier occurrences of the same key.
     return {x['team']: (x['id'], x['content']) for x in rows}
+
+
+async def create_session(
+    database: databases.Database,
+    name: str,
+    *,
+    by_username: str,
+) -> int:
+    """
+    Return a mapping of teams to their the chosen archive.
+    """
+
+    # Note: Ideally we'd group by team in SQL, however that doesn't seem to work
+    # properly -- we don't get the ordering applied before the grouping.
+
+    async with database.transaction():
+        rows = await database.fetch_all(
+            select([
+                ChoiceHistory.c.id,
+                Archive.c.team,
+            ]).select_from(
+                Archive.join(ChoiceHistory),
+            ).order_by(
+                Archive.c.team,
+                ChoiceHistory.c.created.asc(),
+            ),
+        )
+
+        session_id = cast(int, await database.execute(
+            Session.insert().values(name=name, username=by_username),
+        ))
+
+        # Rely on later keys replacing earlier occurrences of the same key.
+        choice_by_team = {x['team']: x['id'] for x in rows}
+        await database.execute_many(
+            ChoiceForSession.insert(),
+            [
+                {'choice_id': x, 'session_id': session_id}
+                for x in choice_by_team.values()
+            ],
+        )
+
+    return session_id
 
 
 def summarise(submissions: Dict[str, Tuple[int, bytes]]) -> str:

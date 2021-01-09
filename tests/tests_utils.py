@@ -5,7 +5,7 @@ import datetime
 import test_utils
 
 from code_submitter import utils
-from code_submitter.tables import Archive, ChoiceHistory
+from code_submitter.tables import Archive, ChoiceHistory, ChoiceForSession
 
 
 class UtilsTests(test_utils.InTransactionTestCase):
@@ -74,6 +74,47 @@ class UtilsTests(test_utils.InTransactionTestCase):
                 'ABC': (8888888888, b'8888888888'),
             },
             result,
+        )
+
+    def test_create_session(self) -> None:
+        choice_id_1 = self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=8888888888,
+                username='someone_else',
+                created=datetime.datetime(2020, 8, 8, 12, 0),
+            ),
+        ))
+        choice_id_2 = self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=1111111111,
+                username='test_user',
+                created=datetime.datetime(2020, 3, 3, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=2222222222,
+                username='test_user',
+                created=datetime.datetime(2020, 2, 2, 12, 0),
+            ),
+        ))
+
+        session_id = self.await_(utils.create_session(
+            self.database,
+            "Test Session",
+            by_username='the-user',
+        ))
+
+        choices = self.await_(self.database.fetch_all(
+            ChoiceForSession.select(),
+        ))
+
+        self.assertEqual(
+            [
+                {'choice_id': choice_id_1, 'session_id': session_id},
+                {'choice_id': choice_id_2, 'session_id': session_id},
+            ],
+            [dict(x) for x in choices],
         )
 
     def test_collect_submissions(self) -> None:
