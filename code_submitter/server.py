@@ -1,6 +1,7 @@
 import io
 import zipfile
-import datetime
+import itertools
+from typing import cast
 
 import databases
 from sqlalchemy.sql import select
@@ -16,7 +17,7 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 
 from . import auth, utils, config
 from .auth import User, BLUESHIRT_SCOPE
-from .tables import Archive, ChoiceHistory
+from .tables import Archive, Session, ChoiceHistory, ChoiceForSession
 
 database = databases.Database(config.DATABASE_URL, force_rollback=config.TESTING)
 templates = Jinja2Templates(directory='templates')
@@ -49,10 +50,34 @@ async def homepage(request: Request) -> Response:
             Archive.c.created.desc(),
         ),
     )
+    sessions = await database.fetch_all(
+        Session.select().order_by(Session.c.created.desc()),
+    )
+    sessions_and_archives = await database.fetch_all(
+        select([
+            Archive.c.id,
+            Session.c.name,
+        ]).select_from(
+            Archive.join(ChoiceHistory).join(ChoiceForSession).join(Session),
+        ).where(
+            Archive.c.id.in_(x['id'] for x in uploads),
+        ).order_by(
+            Archive.c.id,
+        ),
+    )
+    sessions_by_upload = {
+        grouper: [x['name'] for x in items]
+        for grouper, items in itertools.groupby(
+            sessions_and_archives,
+            key=lambda y: cast(int, y['id']),
+        )
+    }
     return templates.TemplateResponse('index.html', {
         'request': request,
         'chosen': chosen,
         'uploads': uploads,
+        'sessions': sessions,
+        'sessions_by_upload': sessions_by_upload,
         'BLUESHIRT_SCOPE': BLUESHIRT_SCOPE,
     })
 
@@ -123,14 +148,39 @@ async def upload(request: Request) -> Response:
 
 
 @requires(['authenticated', BLUESHIRT_SCOPE])
+async def create_session(request: Request) -> Response:
+    user: User = request.user
+    form = await request.form()
+
+    await utils.create_session(database, form['name'], by_username=user.username)
+
+    return RedirectResponse(
+        request.url_for('homepage'),
+        # 302 so that the browser switches to GET
+        status_code=302,
+    )
+
+
+@requires(['authenticated', BLUESHIRT_SCOPE])
+@database.transaction()
 async def download_submissions(request: Request) -> Response:
+    session_id = cast(int, request.path_params['session_id'])
+
+    session = await database.fetch_one(
+        Session.select().where(Session.c.id == session_id),
+    )
+
+    if session is None:
+        return Response(
+            f"{session_id!r} is not a valid session id",
+            status_code=404,
+        )
+
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, mode='w') as zf:
-        await utils.collect_submissions(database, zf)
+        await utils.collect_submissions(database, zf, session_id)
 
-    filename = 'submissions-{now}.zip'.format(
-        now=datetime.datetime.now(datetime.timezone.utc),
-    )
+    filename = f"submissions-{session['name']}.zip"
 
     return Response(
         buffer.getvalue(),
@@ -142,7 +192,12 @@ async def download_submissions(request: Request) -> Response:
 routes = [
     Route('/', endpoint=homepage, methods=['GET']),
     Route('/upload', endpoint=upload, methods=['POST']),
-    Route('/download-submissions', endpoint=download_submissions, methods=['GET']),
+    Route('/create-session', endpoint=create_session, methods=['POST']),
+    Route(
+        '/download-submissions/{session_id:int}',
+        endpoint=download_submissions,
+        methods=['GET'],
+    ),
 ]
 
 middleware = [

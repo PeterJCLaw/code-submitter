@@ -4,9 +4,15 @@ import datetime
 from unittest import mock
 
 import test_utils
+from sqlalchemy.sql import select
 from starlette.testclient import TestClient
 
-from code_submitter.tables import Archive, ChoiceHistory
+from code_submitter.tables import (
+    Archive,
+    Session,
+    ChoiceHistory,
+    ChoiceForSession,
+)
 
 
 class AppTests(test_utils.DatabaseTestCase):
@@ -16,11 +22,11 @@ class AppTests(test_utils.DatabaseTestCase):
         # App import must happen after TESTING environment setup
         from code_submitter.server import app
 
-        def url_for(name: str) -> str:
+        def url_for(name: str, **path_params: str) -> str:
             # While it makes for uglier tests, we do need to use more absolute
             # paths here so that the urls emitted contain the root_path from the
             # ASGI server and in turn work correctly under proxy.
-            return 'http://testserver{}'.format(app.url_path_for(name))
+            return 'http://testserver{}'.format(app.url_path_for(name, **path_params))
 
         test_client = TestClient(app)
         self.session = test_client.__enter__()
@@ -277,8 +283,50 @@ class AppTests(test_utils.DatabaseTestCase):
         )
         self.assertEqual([], choices, "Should not have created a choice")
 
+    def test_create_session_requires_blueshirt(self) -> None:
+        response = self.session.post(
+            self.url_for('create_session'),
+            data={'name': "Test session"},
+        )
+        self.assertEqual(403, response.status_code)
+
+    def test_create_session(self) -> None:
+        self.session.auth = ('blueshirt', 'blueshirt')
+
+        response = self.session.post(
+            self.url_for('create_session'),
+            data={'name': "Test session"},
+        )
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(
+            self.url_for('homepage'),
+            response.headers['location'],
+        )
+
+        session, = self.await_(
+            self.database.fetch_all(select([
+                Session.c.name,
+                Session.c.username,
+            ])),
+        )
+
+        self.assertEqual(
+            {
+                'name': 'Test session',
+                'username': 'blueshirt',
+            },
+            dict(session),
+            "Should have created a session",
+        )
+
     def test_no_download_link_for_non_blueshirt(self) -> None:
-        download_url = self.url_for('download_submissions')
+        session_id = self.await_(self.database.execute(
+            Session.insert().values(
+                name="Test session",
+                username='blueshirt',
+            ),
+        ))
+        download_url = self.url_for('download_submissions', session_id=session_id)
 
         response = self.session.get(self.url_for('homepage'))
 
@@ -288,20 +336,50 @@ class AppTests(test_utils.DatabaseTestCase):
     def test_shows_download_link_for_blueshirt(self) -> None:
         self.session.auth = ('blueshirt', 'blueshirt')
 
-        download_url = self.url_for('download_submissions')
+        session_id = self.await_(self.database.execute(
+            Session.insert().values(
+                name="Test session",
+                username='blueshirt',
+            ),
+        ))
+        download_url = self.url_for('download_submissions', session_id=session_id)
 
         response = self.session.get(self.url_for('homepage'))
         html = response.text
         self.assertIn(download_url, html)
 
     def test_download_submissions_requires_blueshirt(self) -> None:
-        response = self.session.get(self.url_for('download_submissions'))
+        session_id = self.await_(self.database.execute(
+            Session.insert().values(
+                name="Test session",
+                username='blueshirt',
+            ),
+        ))
+        response = self.session.get(
+            self.url_for('download_submissions', session_id=session_id),
+        )
         self.assertEqual(403, response.status_code)
+
+    def test_download_submissions_when_invalid_session(self) -> None:
+        self.session.auth = ('blueshirt', 'blueshirt')
+        response = self.session.get(
+            self.url_for('download_submissions', session_id='4'),
+        )
+        self.assertEqual(404, response.status_code)
 
     def test_download_submissions_when_none(self) -> None:
         self.session.auth = ('blueshirt', 'blueshirt')
 
-        response = self.session.get(self.url_for('download_submissions'))
+        session_id = self.await_(self.database.execute(
+            Session.insert().values(
+                name="Test session",
+                username='blueshirt',
+            ),
+        ))
+
+        response = self.session.get(
+            self.url_for('download_submissions', session_id=session_id),
+        )
         self.assertEqual(200, response.status_code)
 
         with zipfile.ZipFile(io.BytesIO(response.content)) as zf:
@@ -322,7 +400,7 @@ class AppTests(test_utils.DatabaseTestCase):
                 created=datetime.datetime(2020, 8, 8, 12, 0),
             ),
         ))
-        self.await_(self.database.execute(
+        choice_id = self.await_(self.database.execute(
             ChoiceHistory.insert().values(
                 archive_id=8888888888,
                 username='test_user',
@@ -330,7 +408,22 @@ class AppTests(test_utils.DatabaseTestCase):
             ),
         ))
 
-        response = self.session.get(self.url_for('download_submissions'))
+        session_id = self.await_(self.database.execute(
+            Session.insert().values(
+                name="Test session",
+                username='blueshirt',
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceForSession.insert().values(
+                choice_id=choice_id,
+                session_id=session_id,
+            ),
+        ))
+
+        response = self.session.get(
+            self.url_for('download_submissions', session_id=session_id),
+        )
         self.assertEqual(200, response.status_code)
 
         with zipfile.ZipFile(io.BytesIO(response.content)) as zf:
