@@ -16,11 +16,11 @@ class AppTests(test_utils.DatabaseTestCase):
         # App import must happen after TESTING environment setup
         from code_submitter.server import app
 
-        def url_for(name: str) -> str:
+        def url_for(name: str, **path_params: str) -> str:
             # While it makes for uglier tests, we do need to use more absolute
             # paths here so that the urls emitted contain the root_path from the
             # ASGI server and in turn work correctly under proxy.
-            return 'http://testserver{}'.format(app.url_path_for(name))
+            return 'http://testserver{}'.format(app.url_path_for(name, **path_params))
 
         test_client = TestClient(app)
         self.session = test_client.__enter__()
@@ -276,6 +276,68 @@ class AppTests(test_utils.DatabaseTestCase):
             self.database.fetch_all(ChoiceHistory.select()),
         )
         self.assertEqual([], choices, "Should not have created a choice")
+
+    def test_download_requires_team(self) -> None:
+        self.session.auth = ('no_teams_blueshirt', 'blueshirt')
+
+        self.await_(self.database.execute(
+            # Another team's archive we shouldn't be able to see.
+            Archive.insert().values(
+                id=8888888888,
+                content=b'',
+                username='someone_else',
+                team='ABC',
+            ),
+        ))
+
+        response = self.session.get(self.url_for('archive', archive_id='8888888888'))
+        self.assertEqual(403, response.status_code)
+
+    def test_download_requires_matching_team(self) -> None:
+        self.await_(self.database.execute(
+            # Another team's archive we shouldn't be able to see.
+            Archive.insert().values(
+                id=8888888888,
+                content=b'',
+                username='someone_else',
+                team='ABC',
+            ),
+        ))
+
+        response = self.session.get(self.url_for('archive', archive_id='8888888888'))
+        self.assertEqual(404, response.status_code)
+
+    def test_download_own_uploads(self) -> None:
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=1111111111,
+                content=b'beeees',
+                username='test_user',
+                team='SRZ2',
+            ),
+        ))
+
+        response = self.session.get(self.url_for('archive', archive_id='1111111111'))
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(b'beeees', response.content)
+
+    def test_download_own_team_uploads(self) -> None:
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=2222222222,
+                content=b'beeees',
+                username='a_colleague',
+                team='SRZ2',
+            ),
+        ))
+
+        response = self.session.get(self.url_for('archive', archive_id='2222222222'))
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(b'beeees', response.content)
+
+    def test_download_missing_uploads(self) -> None:
+        response = self.session.get(self.url_for('archive', archive_id='4'))
+        self.assertEqual(404, response.status_code)
 
     def test_no_download_link_for_non_blueshirt(self) -> None:
         download_url = self.url_for('download_submissions')
