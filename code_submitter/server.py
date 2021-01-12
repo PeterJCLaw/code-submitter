@@ -138,7 +138,7 @@ async def archive(request: Request) -> Response:
             Archive.c.content,
         ]).where(and_(
             Archive.c.id == archive_id,
-            Archive.c.team == request.user.team,
+            Archive.c.team == user.team,
         )),
     )
 
