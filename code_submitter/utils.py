@@ -22,7 +22,6 @@ async def get_chosen_submissions(
             Archive.c.id,
             Archive.c.team,
             Archive.c.content,
-            ChoiceHistory.c.created,
         ]).select_from(
             Archive.join(ChoiceHistory),
         ).order_by(
