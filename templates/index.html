@@ -57,8 +57,9 @@
         </div>
       </div>
       {% endif %}
+      <!---->
+      {% if request.user.team %}
       <div class="row">
-        {% if request.user.team %}
         <form
           class="col-sm-6"
           action="{{ url_for('upload') }}"
@@ -95,9 +96,6 @@
           </div>
           <button class="btn btn-primary" type="submit">Upload</button>
         </form>
-        {% else %}
-        <em>You are not in a team and so cannot upload files.</em>
-        {% endif %}
       </div>
       <div class="row">
         <div class="col-sm-6">
@@ -138,6 +136,10 @@
           </table>
         </div>
       </div>
+      {% else %}
+      <h3>Your team's uploads</h3>
+      <em>You are not in a team and so cannot upload files.</em>
+      {% endif %}
     </div>
   </body>
 </html>
