@@ -34,9 +34,26 @@
       {% if BLUESHIRT_SCOPE in request.auth.scopes %}
       <div class="row">
         <div class="col-sm-6">
-          <a download href="{{ url_for('download_submissions') }}">
-            Download current chosen submissions
-          </a>
+          <h3>Current Chosen Submissions</h3>
+          <p>
+            <a download href="{{ url_for('download_submissions') }}">
+              Download ▼
+            </a>
+          </p>
+          <table class="table table-striped">
+            <tr>
+              <th scope="col">Team</th>
+              <th scope="col">Archive Id</th>
+              <th scope="col">Chosen At</th>
+            </tr>
+            {% for submission in teams_submissions %}
+            <tr>
+              <td>{{ submission.team }}</td>
+              <td>{{ submission.archive_id }}</td>
+              <td>{{ submission.chosen_at }}</td>
+            </tr>
+            {% endfor %}
+          </table>
         </div>
       </div>
       {% endif %}

@@ -6,3 +6,4 @@ sqlalchemy < 1.4  # https://github.com/encode/databases/issues/298
 alembic
 httpx
 pyyaml
+typing-extensions

@@ -49,10 +49,17 @@ async def homepage(request: Request) -> Response:
             Archive.c.created.desc(),
         ),
     )
+
+    if BLUESHIRT_SCOPE in request.auth.scopes:
+        teams_submissions = await utils.get_chosen_submissions_info(database)
+    else:
+        teams_submissions = ()
+
     return templates.TemplateResponse('index.html', {
         'request': request,
         'chosen': chosen,
         'uploads': uploads,
+        'teams_submissions': teams_submissions,
         'BLUESHIRT_SCOPE': BLUESHIRT_SCOPE,
     })
 

@@ -32,4 +32,4 @@ six==1.15.0               # via python-dateutil, python-multipart
 sniffio==1.1.0            # via httpcore, httpx
 sqlalchemy==1.3.18        # via -r requirements.in, alembic, databases
 starlette==0.13.4         # via -r requirements.in
-typing-extensions==3.7.4.2  # via aiosqlite
+typing-extensions==3.7.4.2  # via -r requirements.in, aiosqlite

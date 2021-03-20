@@ -40,6 +40,50 @@ class UtilsTests(test_utils.InTransactionTestCase):
             ),
         ))
 
+    def test_get_chosen_submissions_info_nothing_chosen(self) -> None:
+        result = self.await_(utils.get_chosen_submissions_info(self.database))
+        self.assertEqual([], result)
+
+    def test_get_chosen_submissions_info_multiple_chosen(self) -> None:
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=8888888888,
+                username='someone_else',
+                created=datetime.datetime(2020, 8, 8, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=1111111111,
+                username='test_user',
+                created=datetime.datetime(2020, 3, 3, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=2222222222,
+                username='test_user',
+                created=datetime.datetime(2020, 2, 2, 12, 0),
+            ),
+        ))
+
+        result = self.await_(utils.get_chosen_submissions_info(self.database))
+        self.assertCountEqual(
+            [
+                utils.SubmissionInfo(
+                    team='SRZ2',
+                    archive_id=1111111111,
+                    chosen_at=datetime.datetime(2020, 3, 3, 12, 0),
+                ),
+                utils.SubmissionInfo(
+                    team='ABC',
+                    archive_id=8888888888,
+                    chosen_at=datetime.datetime(2020, 8, 8, 12, 0),
+                ),
+            ],
+            result,
+        )
+
     def test_get_chosen_submissions_nothing_chosen(self) -> None:
         result = self.await_(utils.get_chosen_submissions(self.database))
         self.assertEqual({}, result)

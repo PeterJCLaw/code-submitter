@@ -91,6 +91,78 @@ class AppTests(test_utils.DatabaseTestCase):
         self.assertNotIn('8888888888', html)
         self.assertNotIn('someone_else', html)
 
+    def test_blueshirt_sees_all_latest_chosen_archives(self) -> None:
+        self.session.auth = ('blueshirt', 'blueshirt')
+
+        self.await_(self.database.execute(
+            # Another team's archive we shouldn't be able to see.
+            Archive.insert().values(
+                id=8888888888,
+                content=b'',
+                username='someone_else',
+                team='ABC',
+                created=datetime.datetime(2020, 8, 8, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=2222222222,
+                content=b'',
+                username='a_colleague',
+                team='SRZ2',
+                created=datetime.datetime(2020, 2, 2, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            Archive.insert().values(
+                id=1111111111,
+                content=b'',
+                username='test_user',
+                team='SRZ2',
+                created=datetime.datetime(2020, 1, 1, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=8888888888,
+                username='someone_else',
+                created=datetime.datetime(2021, 8, 8, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=1111111111,
+                username='test_user',
+                created=datetime.datetime(2021, 3, 3, 12, 0),
+            ),
+        ))
+        self.await_(self.database.execute(
+            ChoiceHistory.insert().values(
+                archive_id=2222222222,
+                username='test_user',
+                created=datetime.datetime(2021, 2, 2, 12, 0),
+            ),
+        ))
+
+        response = self.session.get(self.url_for('homepage'))
+        self.assertEqual(200, response.status_code)
+
+        html = response.text
+        self.assertNotIn('2021-01-01', html)
+        self.assertNotIn('2222222222', html)
+
+        self.assertIn('2021-03-03', html)
+        self.assertIn('1111111111', html)
+        self.assertIn('SRZ2', html)
+
+        self.assertNotIn('someone_else', html)
+        self.assertNotIn('a_colleague', html)
+
+        self.assertNotIn('2020-08-08', html)
+        self.assertIn('2021-08-08', html)
+        self.assertIn('8888888888', html)
+        self.assertIn('ABC', html)
+
     def test_shows_chosen_archive(self) -> None:
         self.await_(self.database.execute(
             # Another team's archive we shouldn't be able to see.

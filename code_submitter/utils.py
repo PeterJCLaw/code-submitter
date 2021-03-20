@@ -1,15 +1,42 @@
-from typing import Dict, Tuple
+import datetime
+from typing import (
+    Any,
+    Dict,
+    Tuple,
+    Union,
+    Mapping,
+    TypeVar,
+    Callable,
+    Iterable,
+    Collection,
+)
 from zipfile import ZipFile
+from typing_extensions import TypedDict
 
 import databases
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, FromClause, ColumnElement
 
 from .tables import Archive, ChoiceHistory
 
+K = TypeVar('K')
+V = TypeVar('V')
+R = TypeVar('R')
 
-async def get_chosen_submissions(
+# Replicate a type from sqlalchemy, telling mypy to ignore the Any.
+SqlalchemyField = Union['ColumnElement[Any]', FromClause, int]  # type:ignore[misc]
+
+# Replicate a type from databases, telling mypy to ignore the Any.
+DatabaseRow = Mapping[str, Any]  # type:ignore[misc]
+
+
+def map_values(mapping: Dict[K, V], fn: Callable[[V], R]) -> Dict[K, R]:
+    return {k: fn(v) for k, v in mapping.items()}
+
+
+async def _get_chosen_submissions_data(
     database: databases.Database,
-) -> Dict[str, Tuple[int, bytes]]:
+    fields: Iterable[SqlalchemyField],
+) -> Dict[str, DatabaseRow]:
     """
     Return a mapping of teams to their the chosen archive.
     """
@@ -19,9 +46,8 @@ async def get_chosen_submissions(
 
     rows = await database.fetch_all(
         select([
-            Archive.c.id,
-            Archive.c.team,
-            Archive.c.content,
+            *fields,
+            Archive.c.team.label('__team'),
         ]).select_from(
             Archive.join(ChoiceHistory),
         ).order_by(
@@ -31,7 +57,50 @@ async def get_chosen_submissions(
     )
 
     # Rely on later keys replacing earlier occurrences of the same key.
-    return {x['team']: (x['id'], x['content']) for x in rows}
+    return {x['__team']: x for x in rows}
+
+
+class SubmissionInfo(TypedDict):
+    team: str
+    archive_id: int
+    chosen_at: datetime.datetime
+
+
+async def get_chosen_submissions_info(
+    database: databases.Database,
+) -> Collection[SubmissionInfo]:
+    """
+    Return a mapping of teams to their the chosen archive.
+    """
+
+    submissions_by_team = await _get_chosen_submissions_data(database, [
+        Archive.c.id,
+        ChoiceHistory.c.created,
+    ])
+    return [
+        SubmissionInfo(
+            team=team,
+            archive_id=info['id'],
+            chosen_at=info['created'],
+        )
+        for team, info in submissions_by_team.items()
+    ]
+
+
+async def get_chosen_submissions(
+    database: databases.Database,
+) -> Dict[str, Tuple[int, bytes]]:
+    """
+    Return a mapping of teams to their the chosen archive.
+    """
+    submissions_by_team = await _get_chosen_submissions_data(database, [
+        Archive.c.id,
+        Archive.c.content,
+    ])
+    return {
+        team: (row['id'], row['content'])
+        for team, row in submissions_by_team.items()
+    }
 
 
 def summarise(submissions: Dict[str, Tuple[int, bytes]]) -> str:
