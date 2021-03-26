@@ -63,7 +63,7 @@ sqlalchemy==1.3.18
     #   databases
 starlette==0.13.4
     # via -r requirements.in
-typing-extensions==3.7.4.2
+typing-extensions==3.7.4.3
     # via
     #   -r requirements.in
     #   aiosqlite
