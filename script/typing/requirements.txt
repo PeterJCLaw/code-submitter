@@ -1,3 +1,4 @@
 mypy
 
 sqlalchemy-stubs
+types-PyYAML
