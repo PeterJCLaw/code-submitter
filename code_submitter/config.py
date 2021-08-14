@@ -1,6 +1,7 @@
 import json
+import os.path
 import importlib
-from typing import cast, Type, Mapping, TypeVar
+from typing import cast, List, Type, Mapping, TypeVar
 from typing_extensions import TypedDict
 
 from starlette.config import Config
@@ -41,6 +42,10 @@ def get_auth_backend() -> AuthenticationBackend:
     return backend(**AUTH_BACKEND['kwargs'])  # type: ignore[call-arg]
 
 
+def load_required_files_in_archive(raw: str) -> List[str]:
+    return raw.split(os.path.pathsep)
+
+
 config = Config('.env')
 
 DATABASE_URL: str = config('DATABASE_URL', default='sqlite:///sqlite.db')
@@ -50,4 +55,10 @@ AUTH_BACKEND: AuthConfig = config(
     'AUTH_BACKEND',
     load_auth_backend,
     json.dumps({'backend': 'code_submitter.auth.DummyBackend'}),
+)
+
+REQUIRED_FILES_IN_ARCHIVE: AuthConfig = config(
+    'REQUIRED_FILES_IN_ARCHIVE',
+    load_required_files_in_archive,
+    'robot.py',
 )

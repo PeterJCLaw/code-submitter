@@ -99,13 +99,14 @@ async def upload(request: Request) -> Response:
     except zipfile.BadZipFile:
         return Response("Must upload a ZIP file", status_code=400)
 
-    try:
-        zf.getinfo('robot.py')
-    except KeyError:
-        return Response(
-            "ZIP file must contain a 'robot.py' at the root",
-            status_code=400,
-        )
+    for filepath in config.REQUIRED_FILES_IN_ARCHIVE:
+        try:
+            zf.getinfo(filepath)
+        except KeyError:
+            return Response(
+                f"ZIP file must contain a {filepath!r}",
+                status_code=400,
+            )
 
     archive_id = await database.execute(
         Archive.insert().values(
