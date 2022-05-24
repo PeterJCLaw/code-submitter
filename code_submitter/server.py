@@ -88,11 +88,6 @@ async def upload(request: Request) -> Response:
         )
 
     contents = await archive.read()
-    if isinstance(contents, str):
-        raise ValueError(
-            "Uploaded files should always be bytes (not str). "
-            "Why doesn't starlette enforce this?",
-        )
 
     try:
         zf = zipfile.ZipFile(io.BytesIO(contents))

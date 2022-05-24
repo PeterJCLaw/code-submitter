@@ -2,7 +2,7 @@ starlette
 jinja2
 python-multipart
 databases[sqlite]
-sqlalchemy < 1.4  # https://github.com/encode/databases/issues/298
+sqlalchemy
 alembic
 httpx
 pyyaml
