@@ -39,7 +39,7 @@ def load_auth_backend(raw: str) -> AuthConfig:
 
 def get_auth_backend() -> AuthenticationBackend:
     backend = AUTH_BACKEND['backend']
-    return backend(**AUTH_BACKEND['kwargs'])  # type: ignore[call-arg]
+    return backend(**AUTH_BACKEND['kwargs'])
 
 
 def load_required_files_in_archive(raw: str) -> List[str]:
