@@ -17,7 +17,7 @@ async def async_main(output_archive: Path) -> None:
 
     with zipfile.ZipFile(output_archive) as zf:
         async with database.transaction():
-            utils.collect_submissions(database, zf)
+            await utils.collect_submissions(database, zf)
 
 
 def parse_args() -> argparse.Namespace:
