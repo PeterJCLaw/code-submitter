@@ -57,7 +57,7 @@ AUTH_BACKEND: AuthConfig = config(
     json.dumps({'backend': 'code_submitter.auth.DummyBackend'}),
 )
 
-REQUIRED_FILES_IN_ARCHIVE: AuthConfig = config(
+REQUIRED_FILES_IN_ARCHIVE: List[str] = config(
     'REQUIRED_FILES_IN_ARCHIVE',
     load_required_files_in_archive,
     'robot.py',
