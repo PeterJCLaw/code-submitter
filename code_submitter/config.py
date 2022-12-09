@@ -3,7 +3,8 @@ from __future__ import annotations
 import json
 import os.path
 import importlib
-from typing import cast, Type, Mapping, TypeVar
+from typing import cast, TypeVar
+from collections.abc import Mapping
 from typing_extensions import TypedDict
 
 from starlette.config import Config
@@ -22,7 +23,7 @@ def load_class(name: str, type_: type[T]) -> type[T]:
             cls,
             type_,
         ))
-    return cast(Type[T], cls)
+    return cast(type[T], cls)
 
 
 class AuthConfig(TypedDict):

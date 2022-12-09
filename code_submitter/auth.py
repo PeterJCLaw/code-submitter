@@ -3,8 +3,9 @@ from __future__ import annotations
 import base64
 import logging
 import secrets
-from typing import cast, Dict, Tuple, Sequence
+from typing import cast
 from pathlib import Path
+from collections.abc import Sequence
 from typing_extensions import TypedDict
 
 import yaml
@@ -30,7 +31,7 @@ class User(SimpleUser):
         self.team = team
 
 
-ValidationResult = Tuple[Sequence[str], User]
+ValidationResult = tuple[Sequence[str], User]
 
 
 def auth_required_response(conn: HTTPConnection, exc: Exception) -> Response:
@@ -224,7 +225,7 @@ class FileBackend(BasicAuthBackend):
 
     def __init__(self, *, path: str | Path) -> None:
         with open(path) as f:
-            self.credentials = cast(Dict[str, str], yaml.safe_load(f))
+            self.credentials = cast(dict[str, str], yaml.safe_load(f))
 
     def get_scopes(self, username: str) -> list[str]:
         scopes = ['authenticated']

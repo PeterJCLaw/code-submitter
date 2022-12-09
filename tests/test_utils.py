@@ -4,7 +4,8 @@ import json
 import asyncio
 import tempfile
 import unittest
-from typing import IO, TypeVar, Awaitable
+from typing import IO, TypeVar
+from collections.abc import Awaitable
 
 import alembic
 import databases

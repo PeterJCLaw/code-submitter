@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any, Union, TypeVar, Callable, Iterable, Collection
+from typing import Any, Union, TypeVar, Callable
 from zipfile import ZipFile
+from collections.abc import Iterable, Collection
 from typing_extensions import TypedDict
 
 import databases

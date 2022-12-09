@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, TypeVar, Callable, Coroutine
+from typing import Any, TypeVar, Callable
 from pathlib import Path
+from collections.abc import Coroutine
 
 import test_utils
 from starlette.requests import Request
