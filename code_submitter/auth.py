@@ -1,7 +1,6 @@
 import base64
 import logging
 import secrets
-import binascii
 from typing import cast, Dict, List, Tuple, Union, Optional, Sequence
 from pathlib import Path
 from typing_extensions import TypedDict
@@ -46,7 +45,7 @@ def extract_basic_auth(auth_header: str) -> Tuple[str, str]:
         if scheme.lower() != 'basic':
             raise AuthenticationError("Invalid auth scheme")
         decoded = base64.b64decode(credentials).decode('ascii')
-    except (ValueError, UnicodeDecodeError, binascii.Error):
+    except ValueError:
         raise AuthenticationError("Invalid basic auth credentials")
 
     username, _, password = decoded.partition(':')
