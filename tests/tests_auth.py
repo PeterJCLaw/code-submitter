@@ -1,3 +1,4 @@
+from typing import Any, TypeVar, Callable, Coroutine
 from pathlib import Path
 
 import test_utils
@@ -13,8 +14,19 @@ from code_submitter.auth import (
     NemesisUserInfo,
 )
 
+TEndpoint = TypeVar(  # type: ignore[misc]  # Allow Any in generic definition
+    'TEndpoint',
+    bound=Callable[[Request], Coroutine[Any, Any, Response]],
+)
+
 
 class NemesisAuthTests(test_utils.AsyncTestCase):
+    def nemesis_route(self, path: str) -> Callable[[TEndpoint], TEndpoint]:  # type: ignore[misc]  # Allow Any in generic definition  # noqa:E501
+        def decorator(endpoint: TEndpoint) -> TEndpoint:  # type: ignore[misc]  # Allow Any in generic definition  # noqa:E501
+            self.fake_nemesis.router.add_route(path, endpoint)
+            return endpoint
+        return decorator
+
     def setUp(self) -> None:
         super().setUp()
 
@@ -31,7 +43,7 @@ class NemesisAuthTests(test_utils.AsyncTestCase):
         self.backend = NemesisBackend(self.fake_nemesis, url='http://nowhere/')
 
     def test_not_authenticated(self) -> None:
-        @self.fake_nemesis.route('/user/user')
+        @self.nemesis_route('/user/user')
         async def endpoint(request: Request) -> Response:
             return JSONResponse(
                 {'authentication_errors': [
@@ -46,7 +58,7 @@ class NemesisAuthTests(test_utils.AsyncTestCase):
             self.await_(self.backend.validate('user', 'pass'))
 
     def test_ok(self) -> None:
-        @self.fake_nemesis.route('/user/user')
+        @self.nemesis_route('/user/user')
         async def endpoint(request: Request) -> Response:
             return JSONResponse(self.info)
 
@@ -58,7 +70,7 @@ class NemesisAuthTests(test_utils.AsyncTestCase):
         self.assertEqual('ABC', user.team, "Wrong team for user")
 
     def test_no_team(self) -> None:
-        @self.fake_nemesis.route('/user/user')
+        @self.nemesis_route('/user/user')
         async def endpoint(request: Request) -> Response:
             self.info['teams'] = []
             return JSONResponse(self.info)
@@ -71,7 +83,7 @@ class NemesisAuthTests(test_utils.AsyncTestCase):
         self.assertEqual(['authenticated'], scopes, "Wrong scopes for user")
 
     def test_multiple_teams(self) -> None:
-        @self.fake_nemesis.route('/user/user')
+        @self.nemesis_route('/user/user')
         async def endpoint(request: Request) -> Response:
             self.info['teams'] = ['team-DEF', 'team-ABC']
             return JSONResponse(self.info)
@@ -84,7 +96,7 @@ class NemesisAuthTests(test_utils.AsyncTestCase):
         self.assertEqual(['authenticated'], scopes, "Wrong scopes for user")
 
     def test_blueshirt(self) -> None:
-        @self.fake_nemesis.route('/user/user')
+        @self.nemesis_route('/user/user')
         async def endpoint(request: Request) -> Response:
             self.info['teams'] = []
             self.info['is_blueshirt'] = True
