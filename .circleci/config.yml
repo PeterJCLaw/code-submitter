@@ -121,7 +121,7 @@ jobs:
       - *save-dependencies-cache
 
       - run:
-          name: Run Flake8
+          name: Run mypy
           command: |
             source venv/bin/activate
             ./script/typing/check
