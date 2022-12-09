@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, TypeVar, Callable, Coroutine
 from pathlib import Path
 

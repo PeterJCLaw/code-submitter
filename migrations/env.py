@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import pool, engine_from_config
+
 from code_submitter.config import DATABASE_URL
 from code_submitter.tables import metadata as target_metadata
 
