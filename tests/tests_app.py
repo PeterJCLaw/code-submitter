@@ -3,6 +3,7 @@ import zipfile
 import datetime
 from unittest import mock
 
+import httpx
 import test_utils
 from starlette.testclient import TestClient
 
@@ -24,7 +25,7 @@ class AppTests(test_utils.DatabaseTestCase):
 
         test_client = TestClient(app)
         self.session = test_client.__enter__()
-        self.session.auth = ('test_user', 'test_pass')
+        self.session.auth = httpx.BasicAuth('test_user', 'test_pass')
         self.url_for = url_for
 
     def tearDown(self) -> None:
@@ -92,7 +93,7 @@ class AppTests(test_utils.DatabaseTestCase):
         self.assertNotIn('someone_else', html)
 
     def test_blueshirt_sees_all_latest_chosen_archives(self) -> None:
-        self.session.auth = ('blueshirt', 'blueshirt')
+        self.session.auth = httpx.BasicAuth('blueshirt', 'blueshirt')
 
         self.await_(self.database.execute(
             # Another team's archive we shouldn't be able to see.
@@ -237,6 +238,7 @@ class AppTests(test_utils.DatabaseTestCase):
         response = self.session.post(
             self.url_for('upload'),
             files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
+            follow_redirects=False,
         )
         self.assertEqual(302, response.status_code)
         self.assertEqual(
@@ -280,6 +282,7 @@ class AppTests(test_utils.DatabaseTestCase):
             self.url_for('upload'),
             data={'choose': 'on'},
             files={'archive': ('whatever.zip', contents.getvalue(), 'application/zip')},
+            follow_redirects=False,
         )
         self.assertEqual(302, response.status_code)
         self.assertEqual(
@@ -350,7 +353,7 @@ class AppTests(test_utils.DatabaseTestCase):
         self.assertEqual([], choices, "Should not have created a choice")
 
     def test_download_requires_team(self) -> None:
-        self.session.auth = ('no_teams_blueshirt', 'blueshirt')
+        self.session.auth = httpx.BasicAuth('no_teams_blueshirt', 'blueshirt')
 
         self.await_(self.database.execute(
             # Another team's archive we shouldn't be able to see.
@@ -420,7 +423,7 @@ class AppTests(test_utils.DatabaseTestCase):
         self.assertNotIn(download_url, html)
 
     def test_shows_download_link_for_blueshirt(self) -> None:
-        self.session.auth = ('blueshirt', 'blueshirt')
+        self.session.auth = httpx.BasicAuth('blueshirt', 'blueshirt')
 
         download_url = self.url_for('download_submissions')
 
@@ -433,7 +436,7 @@ class AppTests(test_utils.DatabaseTestCase):
         self.assertEqual(403, response.status_code)
 
     def test_download_submissions_when_none(self) -> None:
-        self.session.auth = ('blueshirt', 'blueshirt')
+        self.session.auth = httpx.BasicAuth('blueshirt', 'blueshirt')
 
         response = self.session.get(self.url_for('download_submissions'))
         self.assertEqual(200, response.status_code)
@@ -445,7 +448,7 @@ class AppTests(test_utils.DatabaseTestCase):
             )
 
     def test_download_submissions(self) -> None:
-        self.session.auth = ('blueshirt', 'blueshirt')
+        self.session.auth = httpx.BasicAuth('blueshirt', 'blueshirt')
 
         self.await_(self.database.execute(
             Archive.insert().values(

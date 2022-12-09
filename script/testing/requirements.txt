@@ -1,1 +1,2 @@
-requests
+# Pin starlette to a version which uses `httpx` rather than `requests` for testing
+starlette >=0.21, <1
