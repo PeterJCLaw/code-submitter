@@ -30,16 +30,9 @@ idna==3.3
     # via
     #   anyio
     #   rfc3986
-importlib-metadata==4.11.4
-    # via
-    #   alembic
-    #   mako
-    #   sqlalchemy
-importlib-resources==5.7.1
-    # via alembic
 jinja2==3.1.2
     # via -r requirements.in
-mako==1.2.0
+mako==1.2.2
     # via alembic
 markupsafe==2.1.1
     # via
@@ -69,10 +62,3 @@ typing-extensions==4.2.0
     # via
     #   -r requirements.in
     #   aiosqlite
-    #   anyio
-    #   importlib-metadata
-    #   starlette
-zipp==3.8.0
-    # via
-    #   importlib-metadata
-    #   importlib-resources
