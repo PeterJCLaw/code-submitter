@@ -4,7 +4,6 @@ from typing import (
     Dict,
     Tuple,
     Union,
-    Mapping,
     TypeVar,
     Callable,
     Iterable,
@@ -25,9 +24,6 @@ R = TypeVar('R')
 # Replicate a type from sqlalchemy, telling mypy to ignore the Any.
 SqlalchemyField = Union['ColumnElement[Any]', FromClause, int]  # type:ignore[misc]
 
-# Replicate a type from databases, telling mypy to ignore the Any.
-DatabaseRow = Mapping[str, Any]  # type:ignore[misc]
-
 
 def map_values(mapping: Dict[K, V], fn: Callable[[V], R]) -> Dict[K, R]:
     return {k: fn(v) for k, v in mapping.items()}
@@ -36,7 +32,7 @@ def map_values(mapping: Dict[K, V], fn: Callable[[V], R]) -> Dict[K, R]:
 async def _get_chosen_submissions_data(
     database: databases.Database,
     fields: Iterable[SqlalchemyField],
-) -> Dict[str, DatabaseRow]:
+) -> Dict[str, databases.interfaces.Record]:
     """
     Return a mapping of teams to their the chosen archive.
     """
