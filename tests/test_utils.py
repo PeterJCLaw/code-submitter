@@ -30,7 +30,7 @@ def ensure_database_configured() -> None:
         pass
 
     DATABASE_FILE = tempfile.NamedTemporaryFile(suffix='sqlite.db')
-    url = 'sqlite:///{}'.format(DATABASE_FILE.name)
+    url = f'sqlite:///{DATABASE_FILE.name}'
 
     environ['TESTING'] = 'True'
     environ['DATABASE_URL'] = url

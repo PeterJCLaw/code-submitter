@@ -3,7 +3,7 @@ from __future__ import annotations
 import base64
 import logging
 import secrets
-from typing import cast, Dict, List, Tuple, Union, Optional, Sequence
+from typing import cast, Dict, Tuple, Sequence
 from pathlib import Path
 from typing_extensions import TypedDict
 
@@ -25,7 +25,7 @@ BLUESHIRT_SCOPE = 'blueshirt'
 
 
 class User(SimpleUser):
-    def __init__(self, username: str, team: Optional[str]) -> None:
+    def __init__(self, username: str, team: str | None) -> None:
         super().__init__(username)
         self.team = team
 
@@ -41,7 +41,7 @@ def auth_required_response(conn: HTTPConnection, exc: Exception) -> Response:
     )
 
 
-def extract_basic_auth(auth_header: str) -> Tuple[str, str]:
+def extract_basic_auth(auth_header: str) -> tuple[str, str]:
     try:
         scheme, credentials = auth_header.split()
         if scheme.lower() != 'basic':
@@ -63,7 +63,7 @@ class BasicAuthBackend(AuthenticationBackend):
     async def authenticate(
         self,
         request: HTTPConnection,
-    ) -> Optional[Tuple[AuthCredentials, User]]:
+    ) -> tuple[AuthCredentials, User] | None:
         auth_header = request.headers.get('Authorization')
         if not auth_header:
             raise AuthenticationError("Bees")
@@ -74,7 +74,7 @@ class BasicAuthBackend(AuthenticationBackend):
 
 
 class DummyBackend(BasicAuthBackend):
-    def __init__(self, team: Optional[str] = 'SRZ') -> None:
+    def __init__(self, team: str | None = 'SRZ') -> None:
         self.team = team
 
     async def validate(self, username: str, password: str) -> ValidationResult:
@@ -85,21 +85,20 @@ class DummyBackend(BasicAuthBackend):
         return ['authenticated'], User(username, self.team)
 
 
-NemesisUserInfo = TypedDict('NemesisUserInfo', {
-    'username': str,
-    'first_name': str,
-    'last_name': str,
-    'teams': List[str],
-    'is_blueshirt': bool,
-    'is_student': bool,
-    'is_team_leader': bool,
-})
+class NemesisUserInfo(TypedDict):
+    username: str
+    first_name: str
+    last_name: str
+    teams: list[str]
+    is_blueshirt: bool
+    is_student: bool
+    is_team_leader: bool
 
 
 class NemesisBackend(BasicAuthBackend):
     def __init__(
         self,
-        app: Optional[Starlette] = None,
+        app: Starlette | None = None,
         *,
         url: str,
         verify: bool = True,
@@ -109,7 +108,7 @@ class NemesisBackend(BasicAuthBackend):
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
         async with self.client as client:
             response = await client.get(
-                'user/{}'.format(username),
+                f'user/{username}',
                 auth=(username, password),
             )
 
@@ -131,7 +130,7 @@ class NemesisBackend(BasicAuthBackend):
             return team[len('team-'):]
         return team
 
-    def get_team(self, info: NemesisUserInfo) -> Optional[str]:
+    def get_team(self, info: NemesisUserInfo) -> str | None:
         teams = [self.strip_team(x) for x in info['teams']]
 
         if not teams:
@@ -151,7 +150,7 @@ class NemesisBackend(BasicAuthBackend):
 
         return team
 
-    def get_scopes(self, info: NemesisUserInfo) -> List[str]:
+    def get_scopes(self, info: NemesisUserInfo) -> list[str]:
         scopes = ['authenticated']
 
         if info['is_blueshirt']:
@@ -195,7 +194,7 @@ class DummyNemesisBackend(NemesisBackend):
         }),
     ]
 
-    def __init__(self, data: List[NemesisUserInfo] = DEFAULT) -> None:
+    def __init__(self, data: list[NemesisUserInfo] = DEFAULT) -> None:
         self.data = {x['username']: x for x in data}
 
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
@@ -223,11 +222,11 @@ class FileBackend(BasicAuthBackend):
     UNKNOWN_USER_MESSAGE = "Username or password is incorrect"
     BLUESHIRT_TEAM = 'SRZ'
 
-    def __init__(self, *, path: Union[str, Path]) -> None:
+    def __init__(self, *, path: str | Path) -> None:
         with open(path) as f:
             self.credentials = cast(Dict[str, str], yaml.safe_load(f))
 
-    def get_scopes(self, username: str) -> List[str]:
+    def get_scopes(self, username: str) -> list[str]:
         scopes = ['authenticated']
 
         if username == self.BLUESHIRT_TEAM:

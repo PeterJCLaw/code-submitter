@@ -1,16 +1,7 @@
 from __future__ import annotations
 
 import datetime
-from typing import (
-    Any,
-    Dict,
-    Tuple,
-    Union,
-    TypeVar,
-    Callable,
-    Iterable,
-    Collection,
-)
+from typing import Any, Union, TypeVar, Callable, Iterable, Collection
 from zipfile import ZipFile
 from typing_extensions import TypedDict
 
@@ -27,14 +18,14 @@ R = TypeVar('R')
 SqlalchemyField = Union['ColumnElement[Any]', FromClause, int]  # type:ignore[misc]
 
 
-def map_values(mapping: Dict[K, V], fn: Callable[[V], R]) -> Dict[K, R]:
+def map_values(mapping: dict[K, V], fn: Callable[[V], R]) -> dict[K, R]:
     return {k: fn(v) for k, v in mapping.items()}
 
 
 async def _get_chosen_submissions_data(
     database: databases.Database,
     fields: Iterable[SqlalchemyField],
-) -> Dict[str, databases.interfaces.Record]:
+) -> dict[str, databases.interfaces.Record]:
     """
     Return a mapping of teams to their the chosen archive.
     """
@@ -87,7 +78,7 @@ async def get_chosen_submissions_info(
 
 async def get_chosen_submissions(
     database: databases.Database,
-) -> Dict[str, Tuple[int, bytes]]:
+) -> dict[str, tuple[int, bytes]]:
     """
     Return a mapping of teams to their the chosen archive.
     """
@@ -101,9 +92,9 @@ async def get_chosen_submissions(
     }
 
 
-def summarise(submissions: Dict[str, Tuple[int, bytes]]) -> str:
+def summarise(submissions: dict[str, tuple[int, bytes]]) -> str:
     return "".join(
-        "{}: {}\n".format(team, id_)
+        f"{team}: {id_}\n"
         for team, (id_, _) in sorted(submissions.items())
     )
 

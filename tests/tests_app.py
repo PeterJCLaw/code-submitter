@@ -23,7 +23,7 @@ class AppTests(test_utils.DatabaseTestCase):
             # While it makes for uglier tests, we do need to use more absolute
             # paths here so that the urls emitted contain the root_path from the
             # ASGI server and in turn work correctly under proxy.
-            return 'http://testserver{}'.format(app.url_path_for(name, **path_params))
+            return f'http://testserver{app.url_path_for(name, **path_params)}'
 
         test_client = TestClient(app)
         self.session = test_client.__enter__()

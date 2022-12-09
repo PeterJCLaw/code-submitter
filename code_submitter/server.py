@@ -85,7 +85,7 @@ async def upload(request: Request) -> Response:
 
     if archive.content_type not in ('application/zip', 'application/x-zip-compressed'):
         return Response(
-            "Must upload a ZIP file, not {!r}".format(archive.content_type),
+            f"Must upload a ZIP file, not {archive.content_type!r}",
             status_code=400,
         )
 

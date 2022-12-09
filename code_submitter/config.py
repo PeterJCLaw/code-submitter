@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os.path
 import importlib
-from typing import cast, List, Type, Mapping, TypeVar
+from typing import cast, Type, Mapping, TypeVar
 from typing_extensions import TypedDict
 
 from starlette.config import Config
@@ -12,7 +12,7 @@ from starlette.authentication import AuthenticationBackend
 T = TypeVar('T')
 
 
-def load_class(name: str, type_: Type[T]) -> Type[T]:
+def load_class(name: str, type_: type[T]) -> type[T]:
     module_name, _, class_name = name.rpartition('.')
     module = importlib.import_module(module_name)
     cls = getattr(module, class_name)
@@ -25,10 +25,9 @@ def load_class(name: str, type_: Type[T]) -> Type[T]:
     return cast(Type[T], cls)
 
 
-AuthConfig = TypedDict('AuthConfig', {
-    'backend': Type[AuthenticationBackend],
-    'kwargs': Mapping[str, object],
-})
+class AuthConfig(TypedDict):
+    backend: type[AuthenticationBackend]
+    kwargs: Mapping[str, object]
 
 
 def load_auth_backend(raw: str) -> AuthConfig:
@@ -44,7 +43,7 @@ def get_auth_backend() -> AuthenticationBackend:
     return backend(**AUTH_BACKEND['kwargs'])
 
 
-def load_required_files_in_archive(raw: str) -> List[str]:
+def load_required_files_in_archive(raw: str) -> list[str]:
     return raw.split(os.path.pathsep)
 
 
@@ -59,7 +58,7 @@ AUTH_BACKEND: AuthConfig = config(
     json.dumps({'backend': 'code_submitter.auth.DummyBackend'}),
 )
 
-REQUIRED_FILES_IN_ARCHIVE: List[str] = config(
+REQUIRED_FILES_IN_ARCHIVE: list[str] = config(
     'REQUIRED_FILES_IN_ARCHIVE',
     load_required_files_in_archive,
     'robot.py',
