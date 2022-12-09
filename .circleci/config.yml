@@ -6,9 +6,7 @@ references:
       name: Build checksum file
       command: |
         declare -a FILES=(
-          "script/linting/requirements.txt"
-          "script/testing/requirements.txt"
-          "script/typing/requirements.txt"
+          "script/dev-requirements.txt"
         )
         for f in ${FILES[@]}
         do
