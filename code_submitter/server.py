@@ -101,7 +101,9 @@ async def upload(request: Request) -> Response:
             zf.getinfo(filepath)
         except KeyError:
             return Response(
-                f"ZIP file must contain a {filepath!r}",
+                f"ZIP file must contain a file named exactly {filepath!r}.\n"
+                "Found the following files:\n " +
+                "\n ".join(zf.namelist()),
                 status_code=400,
             )
 
