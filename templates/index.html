@@ -37,7 +37,7 @@
           <h3>Current Chosen Submissions</h3>
           <p>
             <a download href="{{ url_for('download_submissions') }}">
-              Download ▼
+              Download {{ teams_submissions|length }} submissions ▼
             </a>
           </p>
           <table class="table table-striped">
