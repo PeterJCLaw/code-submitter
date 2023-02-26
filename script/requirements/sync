@@ -1,0 +1,4 @@
+#!/bin/bash
+
+pip-compile "$@"
+pip-compile script/dev-requirements.in "$@"
