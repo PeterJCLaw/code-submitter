@@ -4,9 +4,9 @@
 #
 #    pip-compile
 #
-aiosqlite==0.17.0
+aiosqlite==0.18.0
     # via databases
-alembic==1.8.1
+alembic==1.9.4
     # via -r requirements.in
 anyio==3.6.2
     # via
@@ -16,15 +16,15 @@ certifi==2022.12.7
     # via
     #   httpcore
     #   httpx
-databases[sqlite]==0.6.2
+databases[sqlite]==0.7.0
     # via -r requirements.in
-greenlet==2.0.1
+greenlet==2.0.2
     # via sqlalchemy
 h11==0.14.0
     # via httpcore
-httpcore==0.16.2
+httpcore==0.16.3
     # via httpx
-httpx==0.23.1
+httpx==0.23.3
     # via -r requirements.in
 idna==3.4
     # via
@@ -34,7 +34,7 @@ jinja2==3.1.2
     # via -r requirements.in
 mako==1.2.4
     # via alembic
-markupsafe==2.1.1
+markupsafe==2.1.2
     # via
     #   jinja2
     #   mako
@@ -51,15 +51,14 @@ sniffio==1.3.0
     #   anyio
     #   httpcore
     #   httpx
-sqlalchemy==1.4.41
+sqlalchemy==1.4.46
     # via
     #   -r requirements.in
     #   alembic
     #   databases
 starlette==0.25.0
     # via -r requirements.in
-typing-extensions==4.4.0
+typing-extensions==4.5.0
     # via
     #   -r requirements.in
-    #   aiosqlite
     #   starlette
