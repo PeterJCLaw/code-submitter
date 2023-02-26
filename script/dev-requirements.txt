@@ -15,11 +15,11 @@ anyio==3.6.2
     #   -r script/../requirements.txt
     #   httpcore
     #   starlette
-attrs==22.1.0
+attrs==22.2.0
     # via flake8-bugbear
-bleach==5.0.1
+bleach==6.0.0
     # via readme-renderer
-build==0.9.0
+build==0.10.0
     # via pip-tools
 certifi==2022.12.7
     # via
@@ -29,19 +29,17 @@ certifi==2022.12.7
     #   requests
 cffi==1.15.1
     # via cryptography
-charset-normalizer==2.1.1
+charset-normalizer==3.0.1
     # via requests
 click==8.1.3
     # via pip-tools
-commonmark==0.9.1
-    # via rich
 cryptography==39.0.1
     # via secretstorage
 databases[sqlite]==0.7.0
     # via -r script/../requirements.txt
 docutils==0.19
     # via readme-renderer
-flake8==5.0.4
+flake8==6.0.0
     # via
     #   -r script/linting/requirements.txt
     #   flake8-assertive
@@ -54,9 +52,9 @@ flake8==5.0.4
     #   flake8-tuple
 flake8-assertive==2.1.0
     # via -r script/linting/requirements.txt
-flake8-bugbear==22.12.6
+flake8-bugbear==23.2.13
     # via -r script/linting/requirements.txt
-flake8-builtins==2.0.1
+flake8-builtins==2.1.0
     # via -r script/linting/requirements.txt
 flake8-commas==2.1.0
     # via -r script/linting/requirements.txt
@@ -64,7 +62,7 @@ flake8-comprehensions==3.10.1
     # via -r script/linting/requirements.txt
 flake8-debugger==4.1.2
     # via -r script/linting/requirements.txt
-flake8-isort==5.0.3
+flake8-isort==6.0.0
     # via -r script/linting/requirements.txt
 flake8-todo==0.7
     # via -r script/linting/requirements.txt
@@ -90,11 +88,11 @@ idna==3.4
     #   anyio
     #   requests
     #   rfc3986
-importlib-metadata==4.2.0
+importlib-metadata==6.0.0
     # via
     #   keyring
     #   twine
-isort==5.10.1
+isort==5.12.0
     # via
     #   -r script/linting/requirements.txt
     #   flake8-isort
@@ -106,12 +104,14 @@ jeepney==0.8.0
     #   secretstorage
 jinja2==3.1.2
     # via -r script/../requirements.txt
-keyring==23.9.3
+keyring==23.13.1
     # via twine
 mako==1.2.4
     # via
     #   -r script/../requirements.txt
     #   alembic
+markdown-it-py==2.2.0
+    # via rich
 markupsafe==2.1.2
     # via
     #   -r script/../requirements.txt
@@ -119,42 +119,44 @@ markupsafe==2.1.2
     #   mako
 mccabe==0.7.0
     # via flake8
+mdurl==0.1.2
+    # via markdown-it-py
 more-itertools==9.0.0
     # via jaraco-classes
-mypy==0.991
+mypy==1.0.1
     # via
     #   -r script/typing/requirements.txt
     #   sqlalchemy-stubs
-mypy-extensions==0.4.3
+mypy-extensions==1.0.0
     # via mypy
-packaging==22.0
+packaging==23.0
     # via build
-pep517==0.13.0
-    # via build
-pip-tools==6.11.0
+pip-tools==6.12.2
     # via -r script/dev-requirements.in
-pkginfo==1.9.2
+pkginfo==1.9.6
     # via twine
-pycodestyle==2.9.1
+pycodestyle==2.10.0
     # via
     #   flake8
     #   flake8-debugger
     #   flake8-todo
 pycparser==2.21
     # via cffi
-pyflakes==2.5.0
+pyflakes==3.0.1
     # via flake8
-pygments==2.13.0
+pygments==2.14.0
     # via
     #   readme-renderer
     #   rich
+pyproject-hooks==1.0.0
+    # via build
 python-multipart==0.0.5
     # via -r script/../requirements.txt
 pyyaml==6.0
     # via -r script/../requirements.txt
 readme-renderer==37.3
     # via twine
-requests==2.28.1
+requests==2.28.2
     # via
     #   requests-toolbelt
     #   twine
@@ -165,7 +167,7 @@ rfc3986[idna2008]==1.5.0
     #   -r script/../requirements.txt
     #   httpx
     #   twine
-rich==12.6.0
+rich==13.3.1
     # via twine
 secretstorage==3.3.3
     # via keyring
@@ -196,10 +198,10 @@ tomli==2.0.1
     # via
     #   build
     #   mypy
-    #   pep517
+    #   pyproject-hooks
 twine==4.0.2
     # via -r script/release/requirements.txt
-types-pyyaml==6.0.12.2
+types-pyyaml==6.0.12.8
     # via -r script/typing/requirements.txt
 types-setuptools==67.4.0.3
     # via -r script/typing/requirements.txt
@@ -209,7 +211,7 @@ typing-extensions==4.5.0
     #   mypy
     #   sqlalchemy-stubs
     #   starlette
-urllib3==1.26.13
+urllib3==1.26.14
     # via
     #   requests
     #   twine
@@ -219,7 +221,7 @@ wheel==0.38.4
     # via
     #   -r script/release/requirements.txt
     #   pip-tools
-zipp==3.11.0
+zipp==3.15.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
