@@ -2,7 +2,7 @@ starlette
 jinja2
 python-multipart
 databases[sqlite]
-sqlalchemy
+sqlalchemy>=1.4,<2
 alembic
 httpx
 pyyaml
