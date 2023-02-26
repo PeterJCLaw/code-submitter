@@ -1,6 +1,7 @@
 # Convenience file for local development, not suitable for use on CI as it
 # wouldn't create a useful cache checksum.
 
+-r ../requirements.txt
 -r linting/requirements.txt
 -r release/requirements.txt
 -r testing/requirements.txt
