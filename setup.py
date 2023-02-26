@@ -32,7 +32,7 @@ setup(
     author="Peter Law",
     author_email="PeterJCLaw@gmail.com",
 
-    classifiers=(
+    classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Web Environment',
         'Natural Language :: English',
@@ -42,7 +42,7 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
-    ),
+    ],
     python_requires='>=3.9',
 
     install_requires=install_requires,

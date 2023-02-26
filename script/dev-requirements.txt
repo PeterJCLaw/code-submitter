@@ -201,6 +201,8 @@ twine==4.0.2
     # via -r script/release/requirements.txt
 types-pyyaml==6.0.12.2
     # via -r script/typing/requirements.txt
+types-setuptools==67.4.0.3
+    # via -r script/typing/requirements.txt
 typing-extensions==4.5.0
     # via
     #   -r script/../requirements.txt

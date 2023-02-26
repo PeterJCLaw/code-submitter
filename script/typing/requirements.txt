@@ -1,4 +1,5 @@
 mypy
 
 sqlalchemy-stubs
+types-setuptools
 types-PyYAML
