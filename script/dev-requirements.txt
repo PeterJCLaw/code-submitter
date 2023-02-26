@@ -15,6 +15,10 @@ anyio==3.6.2
     #   -r script/../requirements.txt
     #   httpcore
     #   starlette
+asttokens==2.2.1
+    # via
+    #   flake8-balanced-wrapping
+    #   tuck
 attrs==22.2.0
     # via flake8-bugbear
 bleach==6.0.0
@@ -51,6 +55,8 @@ flake8==6.0.0
     #   flake8-isort
     #   flake8-tuple
 flake8-assertive==2.1.0
+    # via -r script/linting/requirements.txt
+flake8-balanced-wrapping==0.1.1
     # via -r script/linting/requirements.txt
 flake8-bugbear==23.2.13
     # via -r script/linting/requirements.txt
@@ -174,6 +180,7 @@ secretstorage==3.3.3
 six==1.16.0
     # via
     #   -r script/../requirements.txt
+    #   asttokens
     #   bleach
     #   flake8-tuple
     #   python-multipart
@@ -199,6 +206,8 @@ tomli==2.0.1
     #   build
     #   mypy
     #   pyproject-hooks
+tuck==0.2.1
+    # via flake8-balanced-wrapping
 twine==4.0.2
     # via -r script/release/requirements.txt
 types-pyyaml==6.0.12.8

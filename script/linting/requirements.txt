@@ -1,5 +1,6 @@
 flake8>=3.8
 flake8-assertive
+flake8-balanced-wrapping
 flake8-bugbear
 flake8-builtins
 flake8-commas
