@@ -56,7 +56,7 @@ sqlalchemy==1.4.46
     #   -r requirements.in
     #   alembic
     #   databases
-starlette==0.25.0
+starlette==0.27.0
     # via -r requirements.in
 typing-extensions==4.5.0
     # via
