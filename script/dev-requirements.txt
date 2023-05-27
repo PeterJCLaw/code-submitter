@@ -197,15 +197,10 @@ sqlalchemy==1.4.46
     #   databases
 sqlalchemy-stubs==0.4
     # via -r script/typing/requirements.txt
-starlette==0.25.0
+starlette==0.27.0
     # via
     #   -r script/../requirements.txt
     #   -r script/testing/requirements.txt
-tomli==2.0.1
-    # via
-    #   build
-    #   mypy
-    #   pyproject-hooks
 tuck==0.2.1
     # via flake8-balanced-wrapping
 twine==4.0.2
@@ -219,7 +214,6 @@ typing-extensions==4.5.0
     #   -r script/../requirements.txt
     #   mypy
     #   sqlalchemy-stubs
-    #   starlette
 urllib3==1.26.14
     # via
     #   requests
