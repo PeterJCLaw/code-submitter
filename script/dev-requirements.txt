@@ -25,7 +25,7 @@ bleach==6.0.0
     # via readme-renderer
 build==0.10.0
     # via pip-tools
-certifi==2023.5.7
+certifi==2023.7.22
     # via
     #   -r script/../requirements.txt
     #   httpcore
@@ -43,10 +43,6 @@ databases[sqlite]==0.7.0
     # via -r script/../requirements.txt
 docutils==0.20.1
     # via readme-renderer
-exceptiongroup==1.1.1
-    # via
-    #   -r script/../requirements.txt
-    #   anyio
 flake8==6.0.0
     # via
     #   -r script/linting/requirements.txt
@@ -200,11 +196,6 @@ starlette==0.27.0
     # via
     #   -r script/../requirements.txt
     #   -r script/testing/requirements.txt
-tomli==2.0.1
-    # via
-    #   build
-    #   mypy
-    #   pyproject-hooks
 tuck==0.2.1
     # via flake8-balanced-wrapping
 twine==4.0.2
@@ -220,7 +211,6 @@ typing-extensions==4.6.3
     #   flake8-balanced-wrapping
     #   mypy
     #   sqlalchemy-stubs
-    #   starlette
 urllib3==1.26.16
     # via
     #   requests
