@@ -160,7 +160,7 @@ pygments==2.15.1
     #   rich
 pyproject-hooks==1.0.0
     # via build
-python-multipart==0.0.6
+python-multipart==0.0.7
     # via -r script/../requirements.txt
 pyyaml==6.0
     # via -r script/../requirements.txt
@@ -196,7 +196,7 @@ sqlalchemy==1.4.48
     #   databases
 sqlalchemy-stubs==0.4
     # via -r script/typing/requirements.txt
-starlette==0.27.0
+starlette==0.37.0
     # via
     #   -r script/../requirements.txt
     #   -r script/testing/requirements.txt
