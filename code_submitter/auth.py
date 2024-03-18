@@ -67,7 +67,7 @@ class BasicAuthBackend(AuthenticationBackend):
     ) -> tuple[AuthCredentials, User] | None:
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            raise AuthenticationError("Bees")
+            raise AuthenticationError("Missing Authorization header")
 
         username, password = extract_basic_auth(auth_header)
         scopes, user = await self.validate(username, password)
