@@ -92,7 +92,7 @@ httpcore==0.17.2
     #   httpx
 httpx==0.24.1
     # via -r script/../requirements.txt
-idna==3.4
+idna==3.7
     # via
     #   -r script/../requirements.txt
     #   anyio
