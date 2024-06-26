@@ -15,15 +15,15 @@ anyio==3.7.0
     #   -r script/../requirements.txt
     #   httpcore
     #   starlette
-asttokens==2.2.1
+asttokens==2.4.1
     # via
     #   flake8-balanced-wrapping
     #   tuck
-attrs==23.1.0
+attrs==23.2.0
     # via flake8-bugbear
-bleach==6.0.0
-    # via readme-renderer
-build==0.10.0
+backports-tarfile==1.2.0
+    # via jaraco-context
+build==1.2.1
     # via pip-tools
 certifi==2023.7.22
     # via
@@ -31,25 +31,25 @@ certifi==2023.7.22
     #   httpcore
     #   httpx
     #   requests
-cffi==1.15.1
+cffi==1.16.0
     # via cryptography
-charset-normalizer==3.1.0
+charset-normalizer==3.3.2
     # via requests
-click==8.1.3
+click==8.1.7
     # via pip-tools
-cryptography==42.0.4
+cryptography==42.0.8
     # via secretstorage
 databases[sqlite]==0.7.0
     # via
     #   -r script/../requirements.txt
     #   databases
-docutils==0.20.1
+docutils==0.21.2
     # via readme-renderer
 exceptiongroup==1.1.1
     # via
     #   -r script/../requirements.txt
     #   anyio
-flake8==6.0.0
+flake8==7.1.0
     # via
     #   -r script/linting/requirements.txt
     #   flake8-assertive
@@ -62,19 +62,19 @@ flake8==6.0.0
     #   flake8-tuple
 flake8-assertive==2.1.0
     # via -r script/linting/requirements.txt
-flake8-balanced-wrapping==0.1.2
+flake8-balanced-wrapping==0.1.7
     # via -r script/linting/requirements.txt
-flake8-bugbear==23.5.9
+flake8-bugbear==24.4.26
     # via -r script/linting/requirements.txt
-flake8-builtins==2.1.0
+flake8-builtins==2.5.0
     # via -r script/linting/requirements.txt
-flake8-commas==2.1.0
+flake8-commas==4.0.0
     # via -r script/linting/requirements.txt
-flake8-comprehensions==3.12.0
+flake8-comprehensions==3.14.0
     # via -r script/linting/requirements.txt
 flake8-debugger==4.1.2
     # via -r script/linting/requirements.txt
-flake8-isort==6.0.0
+flake8-isort==6.1.1
     # via -r script/linting/requirements.txt
 flake8-todo==0.7
     # via -r script/linting/requirements.txt
@@ -100,15 +100,20 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-importlib-metadata==6.6.0
+importlib-metadata==8.0.0
     # via
+    #   build
     #   keyring
     #   twine
-isort==5.12.0
+isort==5.13.2
     # via
     #   -r script/linting/requirements.txt
     #   flake8-isort
-jaraco-classes==3.2.3
+jaraco-classes==3.4.0
+    # via keyring
+jaraco-context==5.3.0
+    # via keyring
+jaraco-functools==4.0.1
     # via keyring
 jeepney==0.8.0
     # via
@@ -116,13 +121,13 @@ jeepney==0.8.0
     #   secretstorage
 jinja2==3.1.4
     # via -r script/../requirements.txt
-keyring==23.13.1
+keyring==25.2.1
     # via twine
 mako==1.2.4
     # via
     #   -r script/../requirements.txt
     #   alembic
-markdown-it-py==2.2.0
+markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.2
     # via
@@ -133,40 +138,46 @@ mccabe==0.7.0
     # via flake8
 mdurl==0.1.2
     # via markdown-it-py
-more-itertools==9.1.0
-    # via jaraco-classes
-mypy==1.3.0
+more-itertools==10.3.0
+    # via
+    #   jaraco-classes
+    #   jaraco-functools
+mypy==1.10.1
     # via
     #   -r script/typing/requirements.txt
     #   sqlalchemy-stubs
 mypy-extensions==1.0.0
     # via mypy
-packaging==23.1
+nh3==0.2.17
+    # via readme-renderer
+packaging==24.1
     # via build
-pip-tools==7.3.0
+pip-tools==7.4.1
     # via -r script/dev-requirements.in
-pkginfo==1.9.6
+pkginfo==1.10.0
     # via twine
-pycodestyle==2.10.0
+pycodestyle==2.12.0
     # via
     #   flake8
     #   flake8-debugger
     #   flake8-todo
-pycparser==2.21
+pycparser==2.22
     # via cffi
-pyflakes==3.0.1
+pyflakes==3.2.0
     # via flake8
-pygments==2.15.1
+pygments==2.18.0
     # via
     #   readme-renderer
     #   rich
-pyproject-hooks==1.0.0
-    # via build
+pyproject-hooks==1.1.0
+    # via
+    #   build
+    #   pip-tools
 python-multipart==0.0.7
     # via -r script/../requirements.txt
 pyyaml==6.0
     # via -r script/../requirements.txt
-readme-renderer==37.3
+readme-renderer==43.0
     # via twine
 requests==2.32.3
     # via
@@ -176,14 +187,13 @@ requests-toolbelt==1.0.0
     # via twine
 rfc3986==2.0.0
     # via twine
-rich==13.4.1
+rich==13.7.1
     # via twine
 secretstorage==3.3.3
     # via keyring
 six==1.16.0
     # via
     #   asttokens
-    #   bleach
     #   flake8-tuple
 sniffio==1.3.0
     # via
@@ -207,14 +217,13 @@ tomli==2.0.1
     #   build
     #   mypy
     #   pip-tools
-    #   pyproject-hooks
-tuck==0.2.1
+tuck==0.2.4
     # via flake8-balanced-wrapping
-twine==4.0.2
+twine==5.1.1
     # via -r script/release/requirements.txt
-types-pyyaml==6.0.12.10
+types-pyyaml==6.0.12.20240311
     # via -r script/typing/requirements.txt
-types-setuptools==67.8.0.0
+types-setuptools==70.1.0.20240625
     # via -r script/typing/requirements.txt
 typing-extensions==4.6.3
     # via
@@ -228,13 +237,11 @@ urllib3==2.2.2
     # via
     #   requests
     #   twine
-webencodings==0.5.1
-    # via bleach
-wheel==0.40.0
+wheel==0.43.0
     # via
     #   -r script/release/requirements.txt
     #   pip-tools
-zipp==3.15.0
+zipp==3.19.2
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
