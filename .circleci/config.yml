@@ -52,11 +52,11 @@ references:
   python-full-version-matrix: &python-full-version-matrix
     matrix:
       parameters:
-        version: ["3.9", "3.10", "3.11"]
+        version: ["3.9", "3.10", "3.11", "3.12"]
   python-top-and-bottom-version-matrix: &python-top-and-bottom-version-matrix
     matrix:
       parameters:
-        version: ["3.9", "3.11"]
+        version: ["3.9", "3.12"]
   filter-tags: &filter-tags
     filters:
       branches:
