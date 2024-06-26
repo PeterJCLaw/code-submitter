@@ -40,9 +40,7 @@ click==8.1.7
 cryptography==42.0.8
     # via secretstorage
 databases[sqlite]==0.7.0
-    # via
-    #   -r script/../requirements.txt
-    #   databases
+    # via -r script/../requirements.txt
 docutils==0.21.2
     # via readme-renderer
 exceptiongroup==1.1.1
@@ -80,7 +78,7 @@ flake8-todo==0.7
     # via -r script/linting/requirements.txt
 flake8-tuple==0.4.1
     # via -r script/linting/requirements.txt
-greenlet==2.0.2
+greenlet==3.0.3
     # via
     #   -r script/../requirements.txt
     #   sqlalchemy
@@ -175,7 +173,7 @@ pyproject-hooks==1.1.0
     #   pip-tools
 python-multipart==0.0.7
     # via -r script/../requirements.txt
-pyyaml==6.0
+pyyaml==6.0.1
     # via -r script/../requirements.txt
 readme-renderer==43.0
     # via twine
