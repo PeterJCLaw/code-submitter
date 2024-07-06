@@ -25,7 +25,7 @@ backports-tarfile==1.2.0
     # via jaraco-context
 build==1.2.1
     # via pip-tools
-certifi==2023.7.22
+certifi==2024.7.4
     # via
     #   -r script/../requirements.txt
     #   httpcore
