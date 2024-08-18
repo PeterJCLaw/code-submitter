@@ -232,6 +232,18 @@ class AppTests(test_utils.DatabaseTestCase):
 
         self.assertNotIn('2020-09-09', html)
 
+    def test_health_check_ok(self) -> None:
+        response = self.session.get(self.url_for('health_check'))
+        self.assertEqual(200, response.status_code)
+
+        data = response.json()
+        self.assertEqual(
+            {
+                'server': 'ok',
+            },
+            data,
+        )
+
     def test_upload_file(self) -> None:
         contents = io.BytesIO()
         with zipfile.ZipFile(contents, mode='w') as zip_file:

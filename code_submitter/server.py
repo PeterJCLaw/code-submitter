@@ -8,7 +8,7 @@ import databases
 from sqlalchemy.sql import and_, select
 from starlette.routing import Route
 from starlette.requests import Request
-from starlette.responses import Response, RedirectResponse
+from starlette.responses import Response, JSONResponse, RedirectResponse
 from starlette.middleware import Middleware
 from starlette.templating import Jinja2Templates
 from starlette.applications import Starlette
@@ -181,11 +181,19 @@ async def download_submissions(request: Request) -> Response:
     )
 
 
+async def health_check(request: Request) -> Response:
+    return JSONResponse({
+        # By definition the server is OK if we get here.
+        'server': 'ok',
+    })
+
+
 routes = [
     Route('/', endpoint=homepage, methods=['GET']),
     Route('/upload', endpoint=upload, methods=['POST']),
     Route('/archive/{archive_id:int}', endpoint=archive, methods=['GET']),
     Route('/download-submissions', endpoint=download_submissions, methods=['GET']),
+    Route('/health-check', endpoint=health_check, methods=['GET']),
 ]
 
 middleware = [
