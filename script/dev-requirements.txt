@@ -206,7 +206,7 @@ sqlalchemy==1.4.48
     #   databases
 sqlalchemy-stubs==0.4
     # via -r script/typing/requirements.txt
-starlette==0.37.0
+starlette==0.41.0
     # via
     #   -r script/../requirements.txt
     #   -r script/testing/requirements.txt
