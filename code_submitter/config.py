@@ -48,10 +48,7 @@ def load_required_files_in_archive(raw: str) -> list[str]:
     return raw.split(os.path.pathsep)
 
 
-try:
-    config = Config('.env')
-except FileNotFoundError:
-    config = Config()
+config = Config('.env')
 
 DATABASE_URL: str = config('DATABASE_URL', default='sqlite:///sqlite.db')
 TESTING: bool = config('TESTING', cast=bool, default=False)
