@@ -225,7 +225,13 @@ class FileBackend(BasicAuthBackend):
 
     def __init__(self, *, path: str | Path) -> None:
         with open(path) as f:
-            self.credentials = cast(dict[str, str], yaml.safe_load(f))
+            credentials = yaml.safe_load(f)
+            if not isinstance(credentials, dict):
+                raise ValueError(
+                    "Invalid credentials file contents (should be a mapping from "
+                    " username to password).",
+                )
+            self.credentials = cast(dict[str, str], credentials)
 
     def get_scopes(self, username: str) -> list[str]:
         scopes = ['authenticated']
