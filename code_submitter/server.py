@@ -100,10 +100,26 @@ async def upload(request: Request) -> Response:
         try:
             zf.getinfo(filepath)
         except KeyError:
-            return Response(
-                f"ZIP file must contain a file named exactly {filepath!r}.\n"
+            names = zf.namelist()
+            message = (
+                f"ZIP file must contain a file named exactly {filepath!r}.\n\n"
                 "Found the following files:\n " +
-                "\n ".join(zf.namelist()),
+                "\n ".join(zf.namelist())
+            )
+
+            search = '/' + filepath
+            for name in names:
+                if name.endswith(search):
+                    prefix = name[:-len(filepath)]
+                    message += (
+                        "\n\n"
+                        "It looks like you have included a similar file at "
+                        f"{name!r}, perhaps you meant to include that file at "
+                        f"{filepath!r} rather than within {prefix!r}?"
+                    )
+
+            return Response(
+                message,
                 status_code=400,
             )
 
