@@ -67,10 +67,30 @@
           method="POST"
         >
           <h3>Upload a new submission for team {{ request.user.team }}</h3>
+          <p>To submit yor code:</p>
+          <ol>
+            <li>
+              Create a ZIP archive containing at least a
+              <code>robot.py</code> file in the root of the archive.
+            </li>
+            <li>
+              Use the "Browse" button below to select the archive you have
+              created.
+            </li>
+            <li>Click "Upload" to upload the archive.</li>
+          </ol>
           <p>
-            Your submission must include a <code>robot.py</code> file in the
-            root of the ZIP archive.
+            You can submit code as many times as you like, the last submission
+            before the deadline is the submission which will be considered.
           </p>
+          <p>
+            See the
+            <a href="https://studentrobotics.org/docs/tutorials/code_submitter"
+              >Code Submitter documentation</a
+            >
+            in the Student Robotics docs for further details.
+          </p>
+          <hr />
           <div class="form-group">
             <label for="archive">Select ZIP archive</label>
             <input
