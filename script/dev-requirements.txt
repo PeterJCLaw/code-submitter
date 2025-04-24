@@ -13,7 +13,7 @@ alembic==1.11.1
 anyio==3.7.0
     # via
     #   -r script/../requirements.txt
-    #   httpcore
+    #   httpx
     #   starlette
 asttokens==2.4.1
     # via
@@ -86,11 +86,11 @@ h11==0.14.0
     # via
     #   -r script/../requirements.txt
     #   httpcore
-httpcore==0.17.2
+httpcore==1.0.8
     # via
     #   -r script/../requirements.txt
     #   httpx
-httpx==0.24.1
+httpx==0.27.2
     # via -r script/../requirements.txt
 idna==3.7
     # via
@@ -197,7 +197,6 @@ sniffio==1.3.0
     # via
     #   -r script/../requirements.txt
     #   anyio
-    #   httpcore
     #   httpx
 sqlalchemy==1.4.48
     # via
