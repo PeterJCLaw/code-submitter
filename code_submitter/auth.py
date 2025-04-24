@@ -104,7 +104,11 @@ class NemesisBackend(BasicAuthBackend):
         url: str,
         verify: bool = True,
     ) -> None:
-        self.client = httpx.AsyncClient(base_url=url, app=app, verify=verify)
+        self.client = httpx.AsyncClient(
+            base_url=url,
+            transport=httpx.ASGITransport(app=app) if app is not None else None,
+            verify=verify,
+        )
 
     async def load_user(self, username: str, password: str) -> NemesisUserInfo:
         async with self.client as client:
