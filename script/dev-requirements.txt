@@ -230,7 +230,7 @@ typing-extensions==4.6.3
     #   mypy
     #   sqlalchemy-stubs
     #   starlette
-urllib3==2.2.2
+urllib3==2.5.0
     # via
     #   requests
     #   twine
