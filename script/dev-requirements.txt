@@ -151,7 +151,7 @@ packaging==24.1
     # via
     #   build
     #   wheel
-pip-tools==7.4.1
+pip-tools==7.5.2
     # via -r script/dev-requirements.in
 pkginfo==1.10.0
     # via twine
