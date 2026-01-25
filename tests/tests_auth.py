@@ -17,15 +17,15 @@ from code_submitter.auth import (
     NemesisUserInfo,
 )
 
-TEndpoint = TypeVar(  # type: ignore[misc]  # Allow Any in generic definition
+TEndpoint = TypeVar(  # type: ignore[explicit-any]
     'TEndpoint',
     bound=Callable[[Request], Coroutine[Any, Any, Response]],
 )
 
 
 class NemesisAuthTests(test_utils.AsyncTestCase):
-    def nemesis_route(self, path: str) -> Callable[[TEndpoint], TEndpoint]:  # type: ignore[misc]  # Allow Any in generic definition  # noqa:E501
-        def decorator(endpoint: TEndpoint) -> TEndpoint:  # type: ignore[misc]  # Allow Any in generic definition  # noqa:E501
+    def nemesis_route(self, path: str) -> Callable[[TEndpoint], TEndpoint]:  # type: ignore[explicit-any]  # noqa:E501
+        def decorator(endpoint: TEndpoint) -> TEndpoint:  # type: ignore[explicit-any]  # noqa:E501
             self.fake_nemesis.router.add_route(path, endpoint)
             return endpoint
         return decorator

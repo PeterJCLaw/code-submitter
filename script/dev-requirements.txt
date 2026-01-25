@@ -120,6 +120,8 @@ jinja2==3.1.6
     # via -r requirements.txt
 keyring==25.2.1
     # via twine
+librt==0.7.8
+    # via mypy
 mako==1.2.4
     # via
     #   -r requirements.txt
@@ -139,7 +141,7 @@ more-itertools==10.3.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-mypy==1.10.1
+mypy==1.19.1
     # via
     #   -r script/typing/requirements.txt
     #   sqlalchemy-stubs
@@ -151,6 +153,8 @@ packaging==24.1
     # via
     #   build
     #   wheel
+pathspec==1.0.3
+    # via mypy
 pip-tools==7.5.2
     # via -r script/dev-requirements.in
 pkginfo==1.10.0

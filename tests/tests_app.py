@@ -42,7 +42,7 @@ class AppTests(test_utils.DatabaseTestCase):
         self.assertIn("Upload a new submission", html)
 
     def test_app_requires_auth(self) -> None:
-        self.session.auth = None
+        self.session.auth = None  # type: ignore[assignment]
         response = self.session.get(self.url_for('homepage'))
         self.assertEqual(401, response.status_code)
         self.assertIn('WWW-Authenticate', response.headers)

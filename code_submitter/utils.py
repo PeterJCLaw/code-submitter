@@ -16,7 +16,7 @@ V = TypeVar('V')
 R = TypeVar('R')
 
 # Replicate a type from sqlalchemy, telling mypy to ignore the Any.
-SqlalchemyField = Union['ColumnElement[Any]', FromClause, int]  # type:ignore[misc]
+SqlalchemyField = Union['ColumnElement[Any]', FromClause, int]  # type:ignore[explicit-any]  # noqa:E501
 
 
 def map_values(mapping: dict[K, V], fn: Callable[[V], R]) -> dict[K, R]:
