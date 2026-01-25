@@ -73,7 +73,11 @@ class AsyncTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        self.loop = asyncio.get_event_loop()
+        # Note: we move to proper async tests cases
+        try:
+            self.loop = asyncio.get_event_loop()
+        except RuntimeError:
+            self.loop = asyncio.new_event_loop()
 
 
 class DatabaseTestCase(AsyncTestCase):
