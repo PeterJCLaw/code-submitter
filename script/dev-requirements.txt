@@ -37,7 +37,7 @@ charset-normalizer==3.4.4
     # via requests
 click==8.3.1
     # via pip-tools
-cryptography==46.0.3
+cryptography==46.0.5
     # via secretstorage
 databases[sqlite]==0.7.0
     # via -r requirements.txt
