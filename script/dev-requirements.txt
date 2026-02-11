@@ -6,13 +6,13 @@
 #
 aiosqlite==0.19.0
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   databases
 alembic==1.11.1
-    # via -r requirements.txt
+    # via -r ../requirements.txt
 anyio==3.7.0
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   httpx
     #   starlette
 asttokens==2.4.1
@@ -27,7 +27,7 @@ build==1.4.0
     # via pip-tools
 certifi==2024.7.4
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   httpcore
     #   httpx
     #   requests
@@ -37,19 +37,19 @@ charset-normalizer==3.4.4
     # via requests
 click==8.3.1
     # via pip-tools
-cryptography==46.0.3
+cryptography==46.0.5
     # via secretstorage
 databases[sqlite]==0.7.0
-    # via -r requirements.txt
+    # via -r ../requirements.txt
 docutils==0.22.4
     # via readme-renderer
 exceptiongroup==1.1.1
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   anyio
 flake8==7.3.0
     # via
-    #   -r script/linting/requirements.txt
+    #   -r linting/requirements.txt
     #   flake8-assertive
     #   flake8-bugbear
     #   flake8-builtins
@@ -59,44 +59,44 @@ flake8==7.3.0
     #   flake8-isort
     #   flake8-tuple
 flake8-assertive==2.2.0
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-balanced-wrapping==0.1.7
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-bugbear==25.11.29
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-builtins==3.1.0
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-commas==4.0.0
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-comprehensions==3.17.0
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-debugger==4.1.2
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-isort==7.0.0
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-todo==0.7
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 flake8-tuple==0.4.1
-    # via -r script/linting/requirements.txt
+    # via -r linting/requirements.txt
 greenlet==3.2.4
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   sqlalchemy
 h11==0.16.0
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   httpcore
 httpcore==1.0.9
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   httpx
 httpx==0.27.2
-    # via -r requirements.txt
+    # via -r ../requirements.txt
 id==1.5.0
     # via twine
 idna==3.7
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   anyio
     #   httpx
     #   requests
@@ -104,7 +104,7 @@ importlib-metadata==8.7.1
     # via keyring
 isort==7.0.0
     # via
-    #   -r script/linting/requirements.txt
+    #   -r linting/requirements.txt
     #   flake8-isort
 jaraco-classes==3.4.0
     # via keyring
@@ -117,20 +117,20 @@ jeepney==0.9.0
     #   keyring
     #   secretstorage
 jinja2==3.1.6
-    # via -r requirements.txt
+    # via -r ../requirements.txt
 keyring==25.7.0
     # via twine
 librt==0.7.8
     # via mypy
 mako==1.2.4
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   alembic
 markdown-it-py==4.0.0
     # via rich
 markupsafe==2.1.2
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   jinja2
     #   mako
 mccabe==0.7.0
@@ -143,7 +143,7 @@ more-itertools==10.8.0
     #   jaraco-functools
 mypy==1.19.1
     # via
-    #   -r script/typing/requirements.txt
+    #   -r typing/requirements.txt
     #   sqlalchemy-stubs
 mypy-extensions==1.1.0
     # via mypy
@@ -157,7 +157,7 @@ packaging==26.0
 pathspec==1.0.3
     # via mypy
 pip-tools==7.5.2
-    # via -r script/dev-requirements.in
+    # via -r dev-requirements.in
 pycodestyle==2.14.0
     # via
     #   flake8
@@ -176,9 +176,9 @@ pyproject-hooks==1.2.0
     #   build
     #   pip-tools
 python-multipart==0.0.22
-    # via -r requirements.txt
+    # via -r ../requirements.txt
 pyyaml==6.0.1
-    # via -r requirements.txt
+    # via -r ../requirements.txt
 readme-renderer==44.0
     # via twine
 requests==2.32.5
@@ -200,20 +200,20 @@ six==1.17.0
     #   flake8-tuple
 sniffio==1.3.0
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   anyio
     #   httpx
 sqlalchemy==1.4.48
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   alembic
     #   databases
 sqlalchemy-stubs==0.4
-    # via -r script/typing/requirements.txt
+    # via -r typing/requirements.txt
 starlette==0.49.1
     # via
-    #   -r requirements.txt
-    #   -r script/testing/requirements.txt
+    #   -r ../requirements.txt
+    #   -r testing/requirements.txt
 tomli==2.4.0
     # via
     #   build
@@ -222,14 +222,14 @@ tomli==2.4.0
 tuck==0.2.5
     # via flake8-balanced-wrapping
 twine==6.2.0
-    # via -r script/release/requirements.txt
+    # via -r release/requirements.txt
 types-pyyaml==6.0.12.20250915
-    # via -r script/typing/requirements.txt
+    # via -r typing/requirements.txt
 types-setuptools==80.10.0.20260124
-    # via -r script/typing/requirements.txt
+    # via -r typing/requirements.txt
 typing-extensions==4.14.1
     # via
-    #   -r requirements.txt
+    #   -r ../requirements.txt
     #   alembic
     #   cryptography
     #   flake8-balanced-wrapping
@@ -242,7 +242,7 @@ urllib3==2.6.3
     #   twine
 wheel==0.46.3
     # via
-    #   -r script/release/requirements.txt
+    #   -r release/requirements.txt
     #   pip-tools
 zipp==3.23.0
     # via importlib-metadata
