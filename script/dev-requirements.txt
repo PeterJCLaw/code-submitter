@@ -37,7 +37,7 @@ charset-normalizer==3.4.4
     # via requests
 click==8.3.1
     # via pip-tools
-cryptography==46.0.5
+cryptography==46.0.6
     # via secretstorage
 databases[sqlite]==0.7.0
     # via -r requirements.txt
@@ -181,7 +181,7 @@ pyyaml==6.0.1
     # via -r requirements.txt
 readme-renderer==44.0
     # via twine
-requests==2.32.5
+requests==2.33.1
     # via
     #   id
     #   requests-toolbelt
