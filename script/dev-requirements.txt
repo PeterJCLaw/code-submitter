@@ -156,7 +156,7 @@ packaging==26.0
     #   wheel
 pathspec==1.0.3
     # via mypy
-pip-tools==7.5.2
+pip-tools==7.5.3
     # via -r script/dev-requirements.in
 pycodestyle==2.14.0
     # via
