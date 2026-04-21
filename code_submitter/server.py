@@ -57,8 +57,7 @@ async def homepage(request: Request) -> Response:
     else:
         teams_submissions = ()
 
-    return templates.TemplateResponse('index.html', {
-        'request': request,
+    return templates.TemplateResponse(request, 'index.html', {
         'chosen': chosen,
         'uploads': uploads,
         'teams_submissions': teams_submissions,
