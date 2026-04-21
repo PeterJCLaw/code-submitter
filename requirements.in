@@ -1,4 +1,4 @@
-starlette
+starlette>=0.29
 jinja2
 python-multipart
 databases[sqlite]
