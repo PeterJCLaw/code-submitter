@@ -3,6 +3,8 @@ from __future__ import annotations
 import io
 import zipfile
 import datetime
+import contextlib
+from collections.abc import AsyncIterator
 
 import databases
 from sqlalchemy.sql import and_, select
@@ -196,6 +198,13 @@ async def download_submissions(request: Request) -> Response:
     )
 
 
+@contextlib.asynccontextmanager
+async def lifespan(app: Starlette) -> AsyncIterator[None]:
+    await database.connect()
+    yield
+    await database.disconnect()
+
+
 routes = [
     Route('/', endpoint=homepage, methods=['GET']),
     Route('/upload', endpoint=upload, methods=['POST']),
@@ -213,7 +222,6 @@ middleware = [
 
 app = Starlette(
     routes=routes,
-    on_startup=[database.connect],
-    on_shutdown=[database.disconnect],
+    lifespan=lifespan,
     middleware=middleware,
 )
