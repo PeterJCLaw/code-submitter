@@ -19,7 +19,7 @@ asttokens==2.4.1
     # via
     #   flake8-balanced-wrapping
     #   tuck
-attrs==25.4.0
+attrs==26.1.0
     # via flake8-bugbear
 backports-tarfile==1.2.0
     # via jaraco-context
@@ -47,7 +47,7 @@ exceptiongroup==1.1.1
     # via
     #   -r requirements.txt
     #   anyio
-flake8==7.3.0
+flake8==7.4.1
     # via
     #   -r script/linting/requirements.txt
     #   flake8-assertive
@@ -62,7 +62,7 @@ flake8-assertive==2.2.0
     # via -r script/linting/requirements.txt
 flake8-balanced-wrapping==0.1.7
     # via -r script/linting/requirements.txt
-flake8-bugbear==25.11.29
+flake8-bugbear==26.9.30
     # via -r script/linting/requirements.txt
 flake8-builtins==3.1.0
     # via -r script/linting/requirements.txt
@@ -102,7 +102,7 @@ idna==3.16
     #   requests
 importlib-metadata==8.7.1
     # via keyring
-isort==7.0.0
+isort==9.0.2
     # via
     #   -r script/linting/requirements.txt
     #   flake8-isort
@@ -146,7 +146,9 @@ mypy==1.19.1
     #   -r script/typing/requirements.txt
     #   sqlalchemy-stubs
 mypy-extensions==1.1.0
-    # via mypy
+    # via
+    #   isort
+    #   mypy
 nh3==0.3.2
     # via readme-renderer
 packaging==26.0
@@ -158,14 +160,14 @@ pathspec==1.0.3
     # via mypy
 pip-tools==7.5.3
     # via -r script/dev-requirements.in
-pycodestyle==2.14.0
+pycodestyle==2.15.0
     # via
     #   flake8
     #   flake8-debugger
     #   flake8-todo
 pycparser==3.0
     # via cffi
-pyflakes==3.4.0
+pyflakes==4.0.3
     # via flake8
 pygments==2.20.0
     # via
