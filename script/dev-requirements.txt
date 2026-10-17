@@ -209,10 +209,8 @@ sqlalchemy==1.4.48
     #   databases
 sqlalchemy-stubs==0.4
     # via -r script/typing/requirements.txt
-starlette==0.52.1
-    # via
-    #   -r requirements.txt
-    #   -r script/testing/requirements.txt
+starlette==1.7.0
+    # via -r requirements.txt
 tomli==2.4.0
     # via
     #   build
